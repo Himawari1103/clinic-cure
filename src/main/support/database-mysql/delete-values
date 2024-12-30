@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#connect mysql
+echo "mysql root password:"
+read rootpass
+if [[ $rootpass ]]; then
+mysql -uroot -p$rootpass <<EOF
+-- delete values
+use clinic_cure;
+
+EOF
+fi
+
