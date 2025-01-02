@@ -1,6 +1,6 @@
 package model.dao;
 
-import model.Patient;
+import model.base.Patient;
 
 import java.util.ArrayList;
 

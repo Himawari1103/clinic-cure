@@ -1,6 +1,6 @@
 package model.dao;
 
-import model.Receipt;
+import model.base.Receipt;
 
 import java.util.ArrayList;
 

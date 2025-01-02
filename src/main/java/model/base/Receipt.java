@@ -1,9 +1,13 @@
-package model;
+package model.base;
+
+import java.time.LocalDateTime;
 
 public class Receipt {
     private String receiptId;
     private String recordId;
     private double amount;
+    private LocalDateTime createdAt;
+    private LocalDateTime paidAt;
 
     public Receipt() {
     }
@@ -12,6 +16,14 @@ public class Receipt {
         this.receiptId = receiptId;
         this.recordId = recordId;
         this.amount = amount;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Receipt(String receiptId, String recordId, double amount, LocalDateTime createdAt) {
+        this.receiptId = receiptId;
+        this.recordId = recordId;
+        this.amount = amount;
+        this.createdAt = createdAt;
     }
 
     public String getReceiptId() {
@@ -36,6 +48,22 @@ public class Receipt {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getPaidAt() {
+        return paidAt;
+    }
+
+    public void setPaidAt(LocalDateTime paidAt) {
+        this.paidAt = paidAt;
     }
 }
 

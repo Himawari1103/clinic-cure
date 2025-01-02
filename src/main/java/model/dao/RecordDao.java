@@ -1,6 +1,6 @@
 package model.dao;
 
-import model.Record;
+import model.base.Record;
 
 import java.util.ArrayList;
 

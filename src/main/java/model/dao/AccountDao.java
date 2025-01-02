@@ -1,7 +1,12 @@
 package model.dao;
 
-import model.Account;
+import model.base.Account;
+import model.db_connection.DBConnection;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class AccountDao implements Dao<Account>{
@@ -26,7 +31,21 @@ public class AccountDao implements Dao<Account>{
 
     @Override
     public Account selectById(String id) {
-        return null;
+        Account acc = null;
+        Connection c = DBConnection.getConnection();
+
+        try {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("");
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        DBConnection.closeConnection(c);
+        return new Account();
     }
 
     @Override

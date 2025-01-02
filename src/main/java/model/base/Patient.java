@@ -1,4 +1,4 @@
-package model;
+package model.base;
 
 import constants.Gender;
 
@@ -10,16 +10,22 @@ public class Patient {
     private Date dateOfBirth;
     private Gender gender;
     private String phoneNumber;
+    private String nation;
+    private String occupation;
+    private String address;
 
     public Patient() {
     }
 
-    public Patient(String patientId, String fullName, Date dateOfBirth, Gender gender, String phoneNumber) {
+    public Patient(String patientId, String fullName, Date dateOfBirth, Gender gender, String phoneNumber, String nation, String occupation, String address) {
         this.patientId = patientId;
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
+        this.nation = nation;
+        this.occupation = occupation;
+        this.address = address;
     }
 
     public String getPatientId() {
@@ -60,5 +66,29 @@ public class Patient {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getNation() {
+        return nation;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

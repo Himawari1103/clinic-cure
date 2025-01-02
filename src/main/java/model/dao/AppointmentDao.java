@@ -1,6 +1,6 @@
 package model.dao;
 
-import model.Appointment;
+import model.base.Appointment;
 
 import java.util.ArrayList;
 

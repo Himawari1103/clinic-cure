@@ -1,4 +1,6 @@
-package model;
+package model.base;
+
+import java.time.LocalDateTime;
 
 public class Record {
     private String recordId;
@@ -7,6 +9,7 @@ public class Record {
     private String symptom;
     private String diagnosis;
     private String prescription;
+    private LocalDateTime createdAt;
 
     public Record() {
     }
@@ -18,6 +21,17 @@ public class Record {
         this.symptom = symptom;
         this.diagnosis = diagnosis;
         this.prescription = prescription;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Record(String recordId, String patientId, String doctorId, String symptom, String diagnosis, String prescription, LocalDateTime createdAt) {
+        this.recordId = recordId;
+        this.patientId = patientId;
+        this.doctorId = doctorId;
+        this.symptom = symptom;
+        this.diagnosis = diagnosis;
+        this.prescription = prescription;
+        this.createdAt = createdAt;
     }
 
     public String getRecordId() {
@@ -66,5 +80,13 @@ public class Record {
 
     public void setPrescription(String prescription) {
         this.prescription = prescription;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

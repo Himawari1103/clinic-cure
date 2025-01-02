@@ -1,23 +1,19 @@
-package model.db;
+package model.db_connection;
 
 import com.mysql.jdbc.Driver;
+import constants.DB;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    public static String url = "jdbc:mysql://localhost:3306/clinic_cure";
-    public static String username = "root";
-    public static String password = "123123a@";
-
     public static Connection getConnection(){
         Connection c;
 
         try {
             DriverManager.registerDriver(new Driver());
-
-            c = DriverManager.getConnection(url,username,password);
+            c = DriverManager.getConnection(DB.url,DB.username,DB.password);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

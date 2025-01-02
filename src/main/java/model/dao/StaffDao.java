@@ -1,6 +1,6 @@
 package model.dao;
 
-import model.Staff;
+import model.base.Staff;
 
 import java.util.ArrayList;
 

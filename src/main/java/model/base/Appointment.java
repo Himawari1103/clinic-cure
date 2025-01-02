@@ -1,17 +1,18 @@
-package model;
+package model.base;
 
-import java.sql.Date;
+
+import java.time.LocalDateTime;
 
 public class Appointment {
     private String appointmentId;
     private String patientId;
     private String doctorId;
-    private Date time;
+    private LocalDateTime time;
 
     public Appointment() {
     }
 
-    public Appointment(String appointmentId, String patientId, String doctorId, Date time) {
+    public Appointment(String appointmentId, String patientId, String doctorId, LocalDateTime time) {
         this.appointmentId = appointmentId;
         this.patientId = patientId;
         this.doctorId = doctorId;
@@ -42,11 +43,11 @@ public class Appointment {
         this.doctorId = doctorId;
     }
 
-    public Date getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 }
