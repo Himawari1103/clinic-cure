@@ -55,7 +55,7 @@ public class StaffManagement extends javax.swing.JPanel {
         searchStaffComboBox = new javax.swing.JComboBox<>();
         searchSpecialityComboBox = new javax.swing.JComboBox<>();
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Thông tin nhân viên y tế", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Thông tin nhân viên", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("ID:");
@@ -76,7 +76,7 @@ public class StaffManagement extends javax.swing.JPanel {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Vị trí:");
 
-        roleCheckBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bác sĩ ", "Y tá" }));
+        roleCheckBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Bác sĩ" }));
         roleCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 roleCheckBoxActionPerformed(evt);
@@ -204,7 +204,7 @@ public class StaffManagement extends javax.swing.JPanel {
                 .addGap(13, 13, 13))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh sách nhân viên y tế", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh sách nhân viên", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         staffTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -248,7 +248,7 @@ public class StaffManagement extends javax.swing.JPanel {
 
         jLabel14.setText("Chuyên khoa:");
 
-        searchStaffComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bác sĩ", "Y tá" }));
+        searchStaffComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Bác sĩ" }));
 
         searchSpecialityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Tim Mạch - Cardiology", "Thần Kinh - Neurology", "Da liễu - Dermatology", "Nhãn khoa - Ophtalmology", "Tai Mũi Họng - Otolaryngology (ENT)", "Nội tiết - Endocrinology", "Huyết học - Hematology", " " }));
 

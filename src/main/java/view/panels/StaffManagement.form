@@ -35,7 +35,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder justification="2" title="Th&#xf4;ng tin nh&#xe2;n vi&#xea;n y t&#x1ebf;">
+            <TitledBorder justification="2" title="Th&#xf4;ng tin nh&#xe2;n vi&#xea;n">
               <Font PropertyName="font" name="Segoe UI" size="14" style="1"/>
             </TitledBorder>
           </Border>
@@ -170,8 +170,8 @@
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="2">
-                <StringItem index="0" value="B&#xe1;c s&#x129; "/>
-                <StringItem index="1" value="Y t&#xe1;"/>
+                <StringItem index="0" value="--Ch&#x1ecd;n--"/>
+                <StringItem index="1" value="B&#xe1;c s&#x129;"/>
               </StringArray>
             </Property>
           </Properties>
@@ -268,7 +268,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder justification="2" title="Danh s&#xe1;ch nh&#xe2;n vi&#xea;n y t&#x1ebf;">
+            <TitledBorder justification="2" title="Danh s&#xe1;ch nh&#xe2;n vi&#xea;n">
               <Font PropertyName="font" name="Segoe UI" size="14" style="1"/>
             </TitledBorder>
           </Border>
@@ -389,8 +389,8 @@
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="2">
-                <StringItem index="0" value="B&#xe1;c s&#x129;"/>
-                <StringItem index="1" value="Y t&#xe1;"/>
+                <StringItem index="0" value="--Ch&#x1ecd;n--"/>
+                <StringItem index="1" value="B&#xe1;c s&#x129;"/>
               </StringArray>
             </Property>
           </Properties>
