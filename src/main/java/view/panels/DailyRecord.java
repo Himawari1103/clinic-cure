@@ -45,6 +45,8 @@ public class DailyRecord extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        recordTable.setFocusable(false);
+        recordTable.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(recordTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

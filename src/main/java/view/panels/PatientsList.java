@@ -45,6 +45,7 @@ public class PatientsList extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        patientTable.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(patientTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

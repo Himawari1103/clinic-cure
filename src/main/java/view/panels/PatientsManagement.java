@@ -34,7 +34,6 @@ public class PatientsManagement extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         patientGenderComboBox = new javax.swing.JComboBox<>();
-        patientDateOfBirthTextField = new javax.swing.JFormattedTextField();
         patientNationTextField = new javax.swing.JFormattedTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -51,6 +50,9 @@ public class PatientsManagement extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         createRecordButton = new javax.swing.JButton();
+        year = new javax.swing.JTextField();
+        month = new javax.swing.JComboBox<>();
+        date = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         patientTable = new javax.swing.JTable();
@@ -62,6 +64,9 @@ public class PatientsManagement extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         searchPatientPhoneNumberTextField = new javax.swing.JTextField();
 
+        setBackground(new java.awt.Color(229, 245, 255));
+
+        jPanel1.setBackground(new java.awt.Color(229, 245, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Thông tin bệnh nhân", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -92,8 +97,6 @@ public class PatientsManagement extends javax.swing.JPanel {
                 patientGenderComboBoxActionPerformed(evt);
             }
         });
-
-        patientDateOfBirthTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         patientNationTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         patientNationTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -140,45 +143,81 @@ public class PatientsManagement extends javax.swing.JPanel {
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel10.setText("Tuổi:");
 
+        addPatientButton.setBackground(new java.awt.Color(102, 255, 255));
+        addPatientButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         addPatientButton.setText("Thêm BN");
+        addPatientButton.setFocusPainted(false);
+        addPatientButton.setFocusable(false);
         addPatientButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addPatientButtonActionPerformed(evt);
             }
         });
 
+        deletePatientButton.setBackground(new java.awt.Color(255, 204, 204));
+        deletePatientButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         deletePatientButton.setText("Xóa BN");
+        deletePatientButton.setFocusPainted(false);
+        deletePatientButton.setFocusable(false);
         deletePatientButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deletePatientButtonActionPerformed(evt);
             }
         });
 
+        updatePatientButton.setBackground(new java.awt.Color(153, 255, 51));
+        updatePatientButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         updatePatientButton.setText("Cập nhật");
+        updatePatientButton.setFocusPainted(false);
+        updatePatientButton.setFocusable(false);
         updatePatientButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updatePatientButtonActionPerformed(evt);
             }
         });
 
+        cancelButton.setBackground(new java.awt.Color(204, 204, 204));
+        cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cancelButton.setText("Hủy");
+        cancelButton.setFocusPainted(false);
+        cancelButton.setFocusable(false);
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
+        saveButton.setBackground(new java.awt.Color(153, 255, 51));
+        saveButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         saveButton.setText("Lưu");
+        saveButton.setFocusPainted(false);
+        saveButton.setFocusable(false);
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
             }
         });
 
+        createRecordButton.setBackground(new java.awt.Color(102, 255, 255));
+        createRecordButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         createRecordButton.setText("Tạo hồ sơ");
+        createRecordButton.setFocusPainted(false);
+        createRecordButton.setFocusable(false);
         createRecordButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createRecordButtonActionPerformed(evt);
+            }
+        });
+
+        year.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        year.setText("2025");
+
+        month.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+
+        date.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        date.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateActionPerformed(evt);
             }
         });
 
@@ -187,7 +226,7 @@ public class PatientsManagement extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -200,25 +239,29 @@ public class PatientsManagement extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(patientAgeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(patientFullNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(patientDateOfBirthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(patientAddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(month, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(patientFullNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(year, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(patientAddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(51, 51, 51)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(12, 12, 12)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -230,7 +273,7 @@ public class PatientsManagement extends javax.swing.JPanel {
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(patientNationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(patientNationTextField)
                             .addComponent(patientPhoneNumberTextField))
                         .addGap(33, 33, 33))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -262,13 +305,15 @@ public class PatientsManagement extends javax.swing.JPanel {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(patientDateOfBirthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(patientAgeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(jLabel6)
                     .addComponent(patientOccupationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
-                    .addComponent(patientPhoneNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(patientPhoneNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(month, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(year, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -284,6 +329,7 @@ public class PatientsManagement extends javax.swing.JPanel {
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
+        jPanel2.setBackground(new java.awt.Color(229, 245, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh sách bệnh nhân", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         patientTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -302,9 +348,14 @@ public class PatientsManagement extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        patientTable.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(patientTable);
 
+        searchPatientsButton.setBackground(new java.awt.Color(102, 255, 255));
+        searchPatientsButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         searchPatientsButton.setText("Tìm kiếm");
+        searchPatientsButton.setFocusPainted(false);
+        searchPatientsButton.setFocusable(false);
         searchPatientsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchPatientsButtonActionPerformed(evt);
@@ -445,11 +496,16 @@ public class PatientsManagement extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_createRecordButtonActionPerformed
 
+    private void dateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addPatientButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton createRecordButton;
+    private javax.swing.JTextField date;
     private javax.swing.JButton deletePatientButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -466,9 +522,9 @@ public class PatientsManagement extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JComboBox<String> month;
     private javax.swing.JTextField patientAddressTextField;
     private javax.swing.JFormattedTextField patientAgeTextField;
-    private javax.swing.JFormattedTextField patientDateOfBirthTextField;
     private javax.swing.JTextField patientFullNameTextField;
     private javax.swing.JComboBox<String> patientGenderComboBox;
     private javax.swing.JTextField patientIDTextField;
@@ -482,5 +538,6 @@ public class PatientsManagement extends javax.swing.JPanel {
     private javax.swing.JTextField searchPatientPhoneNumberTextField;
     private javax.swing.JButton searchPatientsButton;
     private javax.swing.JButton updatePatientButton;
+    private javax.swing.JTextField year;
     // End of variables declaration//GEN-END:variables
 }

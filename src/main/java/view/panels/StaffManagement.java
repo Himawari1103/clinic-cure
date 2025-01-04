@@ -55,6 +55,9 @@ public class StaffManagement extends javax.swing.JPanel {
         searchStaffComboBox = new javax.swing.JComboBox<>();
         searchSpecialityComboBox = new javax.swing.JComboBox<>();
 
+        setBackground(new java.awt.Color(229, 245, 255));
+
+        jPanel1.setBackground(new java.awt.Color(229, 245, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Thông tin nhân viên", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -96,6 +99,8 @@ public class StaffManagement extends javax.swing.JPanel {
             }
         });
 
+        addButton.setBackground(new java.awt.Color(102, 255, 255));
+        addButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         addButton.setText("Thêm");
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,6 +108,8 @@ public class StaffManagement extends javax.swing.JPanel {
             }
         });
 
+        deleteButton.setBackground(new java.awt.Color(255, 204, 204));
+        deleteButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         deleteButton.setText("Xóa");
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,6 +117,8 @@ public class StaffManagement extends javax.swing.JPanel {
             }
         });
 
+        updateButton.setBackground(new java.awt.Color(153, 255, 0));
+        updateButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         updateButton.setText("Cập nhật");
         updateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -117,6 +126,8 @@ public class StaffManagement extends javax.swing.JPanel {
             }
         });
 
+        cancelButton.setBackground(new java.awt.Color(204, 204, 204));
+        cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cancelButton.setText("Hủy");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -124,6 +135,7 @@ public class StaffManagement extends javax.swing.JPanel {
             }
         });
 
+        refreshButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         refreshButton.setText("Làm mới");
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -204,6 +216,7 @@ public class StaffManagement extends javax.swing.JPanel {
                 .addGap(13, 13, 13))
         );
 
+        jPanel2.setBackground(new java.awt.Color(229, 245, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh sách nhân viên", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         staffTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -222,8 +235,12 @@ public class StaffManagement extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        staffTable.setFocusable(false);
+        staffTable.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(staffTable);
 
+        searchButton.setBackground(new java.awt.Color(102, 255, 255));
+        searchButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         searchButton.setText("Tìm kiếm");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -272,7 +289,7 @@ public class StaffManagement extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchSpecialityComboBox, 0, 177, Short.MAX_VALUE)
+                .addComponent(searchSpecialityComboBox, 0, 174, Short.MAX_VALUE)
                 .addGap(87, 87, 87)
                 .addComponent(searchButton)
                 .addContainerGap())

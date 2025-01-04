@@ -75,9 +75,13 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
         updateButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Báo cáo thống kê", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setBackground(new java.awt.Color(229, 245, 255));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 153, 255)));
 
         jPanel5.setBackground(new java.awt.Color(153, 255, 0));
 
@@ -122,13 +126,13 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
                 .addContainerGap(7, Short.MAX_VALUE))
         );
 
-        jPanel6.setBackground(new java.awt.Color(255, 153, 255));
+        jPanel6.setBackground(new java.awt.Color(255, 204, 204));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setText("Tổng lượt khám");
 
         totalVisitationTextField.setEditable(false);
-        totalVisitationTextField.setBackground(new java.awt.Color(255, 153, 255));
+        totalVisitationTextField.setBackground(new java.awt.Color(255, 204, 204));
         totalVisitationTextField.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         totalVisitationTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         totalVisitationTextField.setBorder(null);
@@ -160,7 +164,7 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
         replacePanel.setLayout(replacePanelLayout);
         replacePanelLayout.setHorizontalGroup(
             replacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 682, Short.MAX_VALUE)
+            .addGap(0, 688, Short.MAX_VALUE)
         );
         replacePanelLayout.setVerticalGroup(
             replacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,7 +198,8 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel4.setBackground(new java.awt.Color(229, 245, 255));
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 153, 255)));
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Ngày bắt đầu:");
@@ -206,14 +211,22 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("-- Chọn thời gian --");
 
+        applyButton.setBackground(new java.awt.Color(153, 255, 51));
+        applyButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         applyButton.setText("Áp dụng");
+        applyButton.setFocusPainted(false);
+        applyButton.setFocusable(false);
         applyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 applyButtonActionPerformed(evt);
             }
         });
 
+        refreshButton.setBackground(new java.awt.Color(255, 204, 204));
+        refreshButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         refreshButton.setText("Làm mới");
+        refreshButton.setFocusPainted(false);
+        refreshButton.setFocusable(false);
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshButtonActionPerformed(evt);
@@ -231,6 +244,7 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
         endYearTF.setText("2025");
 
         choosingComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Thống kê theo ngày", "Thông tin bệnh nhân" }));
+        choosingComboBox.setFocusable(false);
 
         turnoverCheckBox.setSelected(true);
         turnoverCheckBox.setText("Tổng doanh thu");
@@ -239,8 +253,10 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
         visitationCheckBox.setText("Lượt khám");
 
         startMonthComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        startMonthComboBox.setFocusable(false);
 
         endMonthComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        endMonthComboBox.setFocusable(false);
 
         startDateTF.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
@@ -251,14 +267,14 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(endDateTF, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(endMonthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(endMonthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(endYearTF, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -267,7 +283,7 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startDateTF, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(startMonthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(startMonthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startYearTF, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -282,9 +298,9 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
                                 .addComponent(visitationCheckBox))
                             .addComponent(choosingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(applyButton)
-                    .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(applyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(refreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(37, 37, 37))
         );
         jPanel4Layout.setVerticalGroup(
@@ -339,6 +355,7 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Quản lý tài khoản", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         accountTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -357,6 +374,7 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        accountTable.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(accountTable);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -379,24 +397,41 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
         passwordTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         accountTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nhân viên", "Quản trị viên", " " }));
+        accountTypeComboBox.setFocusable(false);
 
+        createAccountButton.setBackground(new java.awt.Color(102, 255, 255));
+        createAccountButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         createAccountButton.setText("Tạo tài khoản");
+        createAccountButton.setFocusPainted(false);
+        createAccountButton.setFocusable(false);
         createAccountButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createAccountButtonActionPerformed(evt);
             }
         });
 
+        deleteAccountButton.setBackground(new java.awt.Color(255, 204, 204));
+        deleteAccountButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         deleteAccountButton.setText("Xóa tài khoản");
+        deleteAccountButton.setFocusPainted(false);
+        deleteAccountButton.setFocusable(false);
         deleteAccountButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteAccountButtonActionPerformed(evt);
             }
         });
 
+        updateButton.setBackground(new java.awt.Color(153, 255, 51));
+        updateButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         updateButton.setText("Cập nhật");
+        updateButton.setFocusPainted(false);
+        updateButton.setFocusable(false);
 
+        cancelButton.setBackground(new java.awt.Color(204, 204, 204));
+        cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cancelButton.setText("Hủy");
+        cancelButton.setFocusPainted(false);
+        cancelButton.setFocusable(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -404,7 +439,7 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(deleteAccountButton)
@@ -414,18 +449,18 @@ public class ReportAndAccountManagement extends javax.swing.JPanel {
                         .addComponent(createAccountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(48, 48, 48)
                         .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(accountIDTextField)
                             .addComponent(loginNameTextField)
                             .addComponent(passwordTextField)
-                            .addComponent(accountTypeComboBox, 0, 164, Short.MAX_VALUE))))
+                            .addComponent(accountTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
