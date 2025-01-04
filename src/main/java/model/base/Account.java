@@ -3,11 +3,14 @@ package model.base;
 
 import constants.AccountType;
 
+import javax.swing.*;
+
 public class Account {
     private String accountId;
     private String username;
     private String password;
     private AccountType accountType;
+    private Icon avatar;
 
     public Account() {
     }
@@ -17,6 +20,16 @@ public class Account {
         this.username = username;
         this.password = password;
         this.accountType = accountType;
+    }
+
+    public Account(String accountId, String username, String password, AccountType accountType, Icon avatar) {
+        this.accountId = accountId;
+        this.username = username;
+        this.password = password;
+        this.accountType = accountType;
+        if (avatar != null) {
+            this.avatar = avatar;
+        }
     }
 
     public String getAccountId() {
@@ -49,5 +62,13 @@ public class Account {
 
     public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
+    }
+
+    public Icon getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(Icon avatar) {
+        this.avatar = avatar;
     }
 }
