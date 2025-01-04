@@ -1,23 +1,59 @@
 package view.components.main.component;
 
+import model.model.AccountModel;
 import view.components.main.swing.Button;
 import view.components.main.swing.ImageAvatar;
 
+import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 public class Header extends javax.swing.JPanel {
 
     public Header() {
         initComponents();
+        currentTime();
     }
 
     public void addMenuEvent(ActionListener event) {
         cmdMenu.addActionListener(event);
     }
 
+    public void currentTime() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dtfTime = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        Thread clock = new Thread() {
+            public void run() {
+                while (true) {
+                    jLabelDate.setText(LocalDateTime.now().format(dtfDate));
+                    jLabelTime.setText(LocalDateTime.now().format(dtfTime));
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+
+        clock.start();
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
+        jLabelDate = new JLabel();
+        jLabelTime = new JLabel();
+        jLabelDate.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        jLabelDate.setForeground(new java.awt.Color(0, 0, 0));
+
+        jLabelTime.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        jLabelTime.setForeground(new java.awt.Color(0, 0, 0));
 
         cmdMenu = new Button();
         pic = new ImageAvatar();
@@ -31,14 +67,14 @@ public class Header extends javax.swing.JPanel {
 
         cmdMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon_main/menu.png"))); // NOI18N
 
-        pic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon_main/profile.jpg"))); // NOI18N
+        pic.setIcon(AccountModel.getAccount().getAvatar()); // NOI18N
 
         lbUserName.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         lbUserName.setForeground(new java.awt.Color(127, 127, 127));
-        lbUserName.setText("User Name");
+        lbUserName.setText(AccountModel.getAccount().getUsername());
 
         lbRole.setForeground(new java.awt.Color(127, 127, 127));
-        lbRole.setText("Admin");
+        lbRole.setText(AccountModel.getAccount().getAccountType().toString());
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -62,11 +98,16 @@ public class Header extends javax.swing.JPanel {
                                 .addGap(3, 3, 3)
 //                .addComponent(buttonBadges1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabelDate, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabelTime, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addGap(18, 18, 18)
                                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(lbUserName, javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(lbRole, javax.swing.GroupLayout.Alignment.TRAILING))
+
                                 .addGap(18, 18, 18)
                                 .addComponent(pic, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
@@ -76,6 +117,10 @@ public class Header extends javax.swing.JPanel {
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jLabelDate)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(jLabelTime))
                                                 .addGroup(layout.createSequentialGroup()
                                                         .addComponent(lbUserName)
                                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -94,9 +139,11 @@ public class Header extends javax.swing.JPanel {
 //    private ButtonBadges buttonBadges1;
 //    private ButtonBadges buttonBadges2;
     private Button cmdMenu;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JLabel lbRole;
-    private javax.swing.JLabel lbUserName;
+    private JSeparator jSeparator1;
+    private JLabel lbRole;
+    private JLabel lbUserName;
     private ImageAvatar pic;
+    private JLabel jLabelDate;
+    private JLabel jLabelTime;
     // End of variables declaration//GEN-END:variables
 }

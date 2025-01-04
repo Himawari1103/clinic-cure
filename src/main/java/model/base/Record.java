@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class Record {
     private String recordId;
     private String patientId;
-    private String doctorId;
+    private String staffId;
     private String symptom;
     private String diagnosis;
     private String prescription;
@@ -14,20 +14,20 @@ public class Record {
     public Record() {
     }
 
-    public Record(String recordId, String patientId, String doctorId, String symptom, String diagnosis, String prescription) {
+    public Record(String recordId, String patientId, String staffId, String symptom, String diagnosis, String prescription) {
         this.recordId = recordId;
         this.patientId = patientId;
-        this.doctorId = doctorId;
+        this.staffId = staffId;
         this.symptom = symptom;
         this.diagnosis = diagnosis;
         this.prescription = prescription;
         this.createdAt = LocalDateTime.now();
     }
 
-    public Record(String recordId, String patientId, String doctorId, String symptom, String diagnosis, String prescription, LocalDateTime createdAt) {
+    public Record(String recordId, String patientId, String staffId, String symptom, String diagnosis, String prescription, LocalDateTime createdAt) {
         this.recordId = recordId;
         this.patientId = patientId;
-        this.doctorId = doctorId;
+        this.staffId = staffId;
         this.symptom = symptom;
         this.diagnosis = diagnosis;
         this.prescription = prescription;
@@ -50,12 +50,12 @@ public class Record {
         this.patientId = patientId;
     }
 
-    public String getDoctorId() {
-        return doctorId;
+    public String getStaffId() {
+        return staffId;
     }
 
-    public void setDoctorId(String doctorId) {
-        this.doctorId = doctorId;
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
 
     public String getSymptom() {

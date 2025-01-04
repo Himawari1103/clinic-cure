@@ -1,12 +1,12 @@
-package view.components.main.main;
+package view.components.main.frames;
 
+import constants.MenuType;
 import view.components.main.component.Header;
 import view.components.main.component.Menu;
 import view.components.main.event.EventMenuSelected;
 import view.components.main.event.EventShowPopupMenu;
-import view.components.main.form.Form1;
-import view.components.main.form.Form_Home;
-import view.components.main.form.MainForm;
+import view.components.main.panels.Form1;
+import view.components.main.panels.MainPanel;
 import view.components.main.swing.MenuItem;
 import view.components.main.swing.PopupMenu;
 import view.components.main.swing.icon.GoogleMaterialDesignIcons;
@@ -20,13 +20,14 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
+import view.panels.*;
 
 public class Main extends javax.swing.JFrame {
 
     private MigLayout layout;
     private Menu menu;
     private Header header;
-    private MainForm main;
+    private MainPanel main;
     private Animator animator;
 
     public Main() {
@@ -56,25 +57,50 @@ public class Main extends javax.swing.JFrame {
         bg.setLayout(layout);
         menu = new Menu();
         header = new Header();
-        main = new MainForm();
+        main = new MainPanel();
         menu.addEvent(new EventMenuSelected() {
             @Override
-            public void menuSelected(int menuIndex, int subMenuIndex) {
-                System.out.println("Menu Index : " + menuIndex + " SubMenu Index " + subMenuIndex);
-                if (menuIndex == 0) {
-                    if (subMenuIndex == 0) {
-                        main.showForm(new Form_Home());
-                    } else if (subMenuIndex == 1) {
-                        main.showForm(new Form1());
+            public void menuSelected(MenuType menuType, MenuType subMenuType) {
+                switch (menuType) {
+                    case STAFF -> {
+                        main.showForm(new StaffManagement());
+                        break;
+                    }
+                    case PATIENT -> {
+                        main.showForm(new PatientsManagement());
+                        break;
+                    }
+                    case RECORD -> {
+                        main.showForm(new RecordsMagagement());
+                        break;
+                    }
+                    case APPOINTMENT_AND_RECEIPT -> {
+                        main.showForm(new AppointmentsAndReceiptsManagement());
+                        break;
+                    }
+                    case REPORT_AND_ACCOUNT -> {
+                        main.showForm(new ReportAndAccountManagement());
                     }
                 }
+
             }
+//            @Override
+//            public void menuSelected(int menuIndex, int subMenuIndex) {
+//                System.out.println("Menu Index : " + menuIndex + " SubMenu Index " + subMenuIndex);
+//                if (menuIndex == 0) {
+//                    if (subMenuIndex == 0) {
+//                        main.showForm(new PatientsManagement());
+//                    } else if (subMenuIndex == 1) {
+//                        main.showForm(new Form1());
+//                    }
+//                }
+//            }
         });
         menu.addEventShowPopup(new EventShowPopupMenu() {
             @Override
             public void showPopup(Component com) {
                 MenuItem item = (MenuItem) com;
-                PopupMenu popup = new PopupMenu(Main.this, item.getIndex(), item.getEventSelected(), item.getMenu().getSubMenu());
+                PopupMenu popup = new PopupMenu(Main.this, item.getMenu().getMenuType(), item.getEventSelected(), item.getMenu().getSubMenuType());
                 int x = Main.this.getX() + 52;
                 int y = Main.this.getY() + com.getY() + 86;
                 popup.setLocation(x, y);
@@ -82,7 +108,7 @@ public class Main extends javax.swing.JFrame {
             }
         });
         menu.initMenuItem();
-        bg.add(menu, "w 230!, spany 2");    // Span Y 2cell
+        bg.add(menu, "w 250!, spany 2");    // Span Y 2cell
         bg.add(header, "h 50!, wrap");
         bg.add(main, "w 100%, h 100%");
         TimingTarget target = new TimingTargetAdapter() {
@@ -124,7 +150,7 @@ public class Main extends javax.swing.JFrame {
         //  Init google icon font
         IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
         //  Start with this form
-        main.showForm(new Form_Home());
+        main.showForm(new PatientsManagement());
     }
 
     @SuppressWarnings("unchecked")

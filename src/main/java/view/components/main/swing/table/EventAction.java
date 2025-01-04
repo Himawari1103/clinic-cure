@@ -1,10 +1,11 @@
 package view.components.main.swing.table;
 
-import view.components.main.model.ModelStudent;
 
-public interface EventAction {
+public interface EventAction <T> {
 
-    public void delete(ModelStudent student);
+    public void delete(T obj);
 
-    public void update(ModelStudent student);
+    public void update(T obj);
+
+    public void insert(T obj);
 }

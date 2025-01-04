@@ -7,7 +7,6 @@ public class Receipt {
     private String recordId;
     private double amount;
     private LocalDateTime createdAt;
-    private LocalDateTime paidAt;
 
     public Receipt() {
     }
@@ -56,14 +55,6 @@ public class Receipt {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getPaidAt() {
-        return paidAt;
-    }
-
-    public void setPaidAt(LocalDateTime paidAt) {
-        this.paidAt = paidAt;
     }
 }
 

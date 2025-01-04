@@ -1,4 +1,4 @@
-package view.components.main.form;
+package view.components.main.panels;
 
 public class Form1 extends javax.swing.JPanel {
 

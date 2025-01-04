@@ -1,14 +1,12 @@
 package view.components.main.swing.table;
 
-import view.components.main.model.ModelStudent;
+public class ModelAction<T>{
 
-public class ModelAction {
-
-    public ModelStudent getStudent() {
+    public T getStudent() {
         return student;
     }
 
-    public void setStudent(ModelStudent student) {
+    public void setStudent(T student) {
         this.student = student;
     }
 
@@ -20,7 +18,7 @@ public class ModelAction {
         this.event = event;
     }
 
-    public ModelAction(ModelStudent student, EventAction event) {
+    public ModelAction(T student, EventAction event) {
         this.student = student;
         this.event = event;
     }
@@ -28,6 +26,6 @@ public class ModelAction {
     public ModelAction() {
     }
 
-    private ModelStudent student;
+    private T student;
     private EventAction event;
 }

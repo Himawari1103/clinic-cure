@@ -21,6 +21,7 @@ public class PanelLogin extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         txtPass = new PasswordField();
         cmd = new Button();
+        byPass = new Button();
 
         txtUser.setLabelText("User Name");
 
@@ -36,6 +37,12 @@ public class PanelLogin extends javax.swing.JPanel {
         cmd.setText("Login");
         cmd.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
 
+        byPass.setBackground(new java.awt.Color(255, 0, 0));
+        byPass.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        byPass.setForeground(new java.awt.Color(255, 255, 255));
+        byPass.setText("By Pass");
+        byPass.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -44,6 +51,7 @@ public class PanelLogin extends javax.swing.JPanel {
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(cmd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(byPass, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtPass, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -62,12 +70,18 @@ public class PanelLogin extends javax.swing.JPanel {
                 .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50)
                 .addComponent(cmd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50)
+                .addComponent(byPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(124, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     public void addEventLogin(ActionListener event) {
         cmd.addActionListener(event);
+    }
+
+    public void addEventByPass(ActionListener event) {
+        byPass.addActionListener(event);
     }
 
     public boolean checkUser() {
@@ -93,6 +107,7 @@ public class PanelLogin extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Button cmd;
+    private Button byPass; //DEBUG!
     private javax.swing.JLabel jLabel1;
     private PasswordField txtPass;
     private TextField txtUser;

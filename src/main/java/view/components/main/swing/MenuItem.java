@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import constants.MenuType;
 import net.miginfocom.swing.MigLayout;
 import view.components.main.event.EventMenu;
 import view.components.main.event.EventMenuSelected;
@@ -38,44 +40,37 @@ public class MenuItem extends javax.swing.JPanel {
         this.eventSelected = eventSelected;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
     private float alpha;
     private ModelMenu menu;
     private boolean open;
     private EventMenuSelected eventSelected;
-    private int index;
 
-    public MenuItem(ModelMenu menu, EventMenu event, EventMenuSelected eventSelected, int index) {
+    public MenuItem(ModelMenu menu, EventMenu event, EventMenuSelected eventSelected, MenuType menuType) {
         initComponents();
         this.menu = menu;
         this.eventSelected = eventSelected;
-        this.index = index;
         setOpaque(false);
         setLayout(new MigLayout("wrap, fillx, insets 0", "[fill]", "[fill, 40!]0[fill, 35!]"));
-        MenuButton firstItem = new MenuButton(menu.getIcon(), "      " + menu.getMenuName());
+        MenuButton firstItem = new MenuButton(menu.getIcon(), "      " + menu.getMenuType().getDetail());
         firstItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (menu.getSubMenu().length > 0) {
+                if (menu.getSubMenuType().length > 0) {
                     if (event.menuPressed(MenuItem.this, !open)) {
                         open = !open;
                     }
                 }
-                eventSelected.menuSelected(index, -1);
+                eventSelected.menuSelected(menuType, MenuType.EMPTY);
             }
         });
         add(firstItem);
-        int subMenuIndex = -1;
-        for (String st : menu.getSubMenu()) {
-            MenuButton item = new MenuButton(st);
-            item.setIndex(++subMenuIndex);
+        for (MenuType st : menu.getSubMenuType()) {
+            MenuButton item = new MenuButton(st.getDetail());
+            item.setMenuType(st);
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
-                    eventSelected.menuSelected(index, item.getIndex());
+                    eventSelected.menuSelected(menu.getMenuType(), item.getMenuType());
                 }
             });
             add(item);
@@ -111,11 +106,11 @@ public class MenuItem extends javax.swing.JPanel {
         g2.fillRect(0, 40, width, height - 40);
         g2.setColor(new Color(100, 100, 100));
         g2.drawLine(30, 40, 30, height - 17);
-        for (int i = 0; i < menu.getSubMenu().length; i++) {
+        for (int i = 0; i < menu.getSubMenuType().length; i++) {
             int y = ((i + 1) * 35 + 40) - 17;
             g2.drawLine(30, y, 38, y);
         }
-        if (menu.getSubMenu().length > 0) {
+        if (menu.getSubMenuType().length > 0) {
             createArrowButton(g2);
         }
         super.paintComponent(grphcs);

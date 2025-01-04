@@ -12,6 +12,10 @@ public class AccountModel {
         }
     }
 
+    public static void create (Account account) {
+        AccountModel.account = account;
+    }
+
     public static Account getAccount() {
         return account;
     }

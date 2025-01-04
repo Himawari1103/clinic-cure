@@ -1,12 +1,12 @@
-package view.components.main.form;
+package view.components.main.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import javax.swing.border.EmptyBorder;
 
-public class MainForm extends javax.swing.JPanel {
+public class MainPanel extends javax.swing.JPanel {
 
-    public MainForm() {
+    public MainPanel() {
         initComponents();
         setOpaque(false);
         setLayout(new BorderLayout());

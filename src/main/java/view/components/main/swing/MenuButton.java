@@ -11,21 +11,23 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
+
+import constants.MenuType;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
 public class MenuButton extends JButton {
 
-    public int getIndex() {
-        return index;
+    public MenuType getMenuType() {
+        return menuType;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setMenuType(MenuType menuType) {
+        this.menuType = menuType;
     }
 
-    private int index;
+    private MenuType menuType;
     private Animator animator;
     private int targetSize;
     private float animatSize;

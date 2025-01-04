@@ -6,16 +6,16 @@ import java.time.LocalDateTime;
 public class Appointment {
     private String appointmentId;
     private String patientId;
-    private String doctorId;
+    private String staffId;
     private LocalDateTime time;
 
     public Appointment() {
     }
 
-    public Appointment(String appointmentId, String patientId, String doctorId, LocalDateTime time) {
+    public Appointment(String appointmentId, String patientId, String staffId, LocalDateTime time) {
         this.appointmentId = appointmentId;
         this.patientId = patientId;
-        this.doctorId = doctorId;
+        this.staffId = staffId;
         this.time = time;
     }
 
@@ -35,12 +35,12 @@ public class Appointment {
         this.patientId = patientId;
     }
 
-    public String getDoctorId() {
-        return doctorId;
+    public String getStaffId() {
+        return staffId;
     }
 
-    public void setDoctorId(String doctorId) {
-        this.doctorId = doctorId;
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
 
     public LocalDateTime getTime() {

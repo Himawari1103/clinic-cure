@@ -10,8 +10,10 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Path2D;
 import javax.swing.JFrame;
 
+import constants.AccountType;
 import constants.LoginResult;
 import controller.login.LoginController;
+import model.base.Account;
 import model.model.AccountModel;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
@@ -90,6 +92,14 @@ public class PanelSlide extends javax.swing.JLayeredPane {
                         login(login.getUserName(), login.getPassword());
                     }
                 }
+            }
+        });
+        login.addEventByPass(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AccountModel.create(new Account("ADMIN","ADMIN","ADMIN", AccountType.ADMIN));
+                Main main = new Main();
+                fram.dispose();
             }
         });
         loading.addEventContinue(new ActionListener() {

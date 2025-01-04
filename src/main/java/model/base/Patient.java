@@ -2,12 +2,13 @@ package model.base;
 
 import constants.Gender;
 
-import java.sql.Date;
+import java.time.LocalDate;
+
 
 public class Patient {
     private String patientId;
     private String fullName;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private Gender gender;
     private String phoneNumber;
     private String nation;
@@ -17,7 +18,7 @@ public class Patient {
     public Patient() {
     }
 
-    public Patient(String patientId, String fullName, Date dateOfBirth, Gender gender, String phoneNumber, String nation, String occupation, String address) {
+    public Patient(String patientId, String fullName, LocalDate dateOfBirth, Gender gender, String phoneNumber, String nation, String occupation, String address) {
         this.patientId = patientId;
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
@@ -44,11 +45,11 @@ public class Patient {
         this.fullName = fullName;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

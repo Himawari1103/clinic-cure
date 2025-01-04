@@ -1,8 +1,14 @@
 package view.components.main.model;
 
+import constants.MenuType;
+
 import javax.swing.Icon;
 
 public class ModelMenu {
+
+    private Icon icon;
+    private MenuType menuType;
+    private MenuType[] subMenuType;
 
     public Icon getIcon() {
         return icon;
@@ -12,32 +18,28 @@ public class ModelMenu {
         this.icon = icon;
     }
 
-    public String getMenuName() {
-        return menuName;
+    public MenuType getMenuType() {
+        return menuType;
     }
 
-    public void setMenuName(String menuName) {
-        this.menuName = menuName;
+    public void setMenuType(MenuType menuType) {
+        this.menuType = menuType;
     }
 
-    public String[] getSubMenu() {
-        return subMenu;
+    public MenuType[] getSubMenuType() {
+        return subMenuType;
     }
 
-    public void setSubMenu(String[] subMenu) {
-        this.subMenu = subMenu;
-    }
-
-    public ModelMenu(Icon icon, String menuName, String... subMenu) {
-        this.icon = icon;
-        this.menuName = menuName;
-        this.subMenu = subMenu;
+    public void setSubMenuType(MenuType[] subMenuType) {
+        this.subMenuType = subMenuType;
     }
 
     public ModelMenu() {
     }
 
-    private Icon icon;
-    private String menuName;
-    private String subMenu[];
+    public ModelMenu(Icon icon, MenuType menuType, MenuType... subMenuType) {
+        this.icon = icon;
+        this.menuType = menuType;
+        this.subMenuType = subMenuType;
+    }
 }

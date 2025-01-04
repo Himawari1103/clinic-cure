@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import javax.swing.ImageIcon;
+
+import constants.MenuType;
 import net.miginfocom.swing.MigLayout;
 import view.components.main.event.EventMenu;
 import view.components.main.event.EventMenuSelected;
@@ -54,25 +56,15 @@ public class Menu extends javax.swing.JPanel {
     }
 
     public void initMenuItem() {
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/1.png")), "Dashboard", "Home", "Buttons", "Cards", "Tabs", "Accordions", "Modals"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/2.png")), "Charts", "Morris", "Flot", "Line"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/3.png")), "Report", "Income", "Expense", "Profit"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/4.png")), "Message", "Sender", "Inbox", "User"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/5.png")), "Staff", "Sender", "Inbox", "User"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/6.png")), "Student", "Menu 001", "Menu 002", "Menu 003"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/7.png")), "Library", "Menu 001", "Menu 002", "Menu 003"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/8.png")), "Holiday", "Menu 001", "Menu 002", "Menu 003"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/9.png")), "Calendar", "Menu 001", "Menu 002", "Menu 003"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/10.png")), "Chat App", "Menu 001", "Menu 002", "Menu 003"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/11.png")), "Contace", "Menu 001", "Menu 002", "Menu 003"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/12.png")), "File Manager", "Menu 001", "Menu 002", "Menu 003"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/13.png")), "Our Centres"));
-//        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), "Gallery"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), "Bệnh nhân"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.PATIENT));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.STAFF));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.APPOINTMENT_AND_RECEIPT));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.RECORD));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.REPORT_AND_ACCOUNT));
     }
 
     private void addMenu(ModelMenu menu) {
-        panel.add(new MenuItem(menu, getEventMenu(), event, panel.getComponentCount()), "h 40!");
+        panel.add(new MenuItem(menu, getEventMenu(), event, menu.getMenuType()), "h 40!");
     }
 
     private EventMenu getEventMenu() {

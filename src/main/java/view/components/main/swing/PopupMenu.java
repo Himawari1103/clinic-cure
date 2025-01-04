@@ -1,5 +1,6 @@
 package view.components.main.swing;
 
+import constants.MenuType;
 import view.components.main.event.EventMenuSelected;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,25 +16,23 @@ public class PopupMenu extends javax.swing.JDialog {
     private Animator animator;
     private boolean show = true;
 
-    public PopupMenu(java.awt.Frame parent, int index, EventMenuSelected eventSelected, String... subMenu) {
+    public PopupMenu(java.awt.Frame parent, MenuType menuType, EventMenuSelected eventSelected, MenuType... subMenus) {
         super(parent, false);
         initComponents();
         setOpacity(0f);
         setBackground(new Color(0, 0, 0, 0));
         panel.setLayout(new MigLayout("fill, wrap", "8[fill, 120]0", "0[35, fill]0[35, fill]0"));
-        int subMenuIndex = -1;
-        for (String st : subMenu) {
-            MenuButton item = new MenuButton(st, true);
-            item.setIndex(++subMenuIndex);
+        for (MenuType st : subMenus) {
+            MenuButton item = new MenuButton(st.getDetail(), true);
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
-                    eventSelected.menuSelected(index, item.getIndex());
+//                    eventSelected.menuSelected(index, item.getIndex());
                     closeMenu();
                 }
             });
             panel.add(item);
-            setSize(new Dimension(120, 35 * subMenu.length));
+            setSize(new Dimension(120, 35 * subMenus.length));
         }
         TimingTarget target = new TimingTargetAdapter() {
             @Override
