@@ -24,6 +24,14 @@ public class StaffModel {
         }
     }
 
+    public static void reset(){
+        patients = null;
+        records = null;
+        staffs = null;
+        appointments = null;
+        receipts = null;
+    }
+
     public static ArrayList<Patient> getPatients() {
         return patients;
     }

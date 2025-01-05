@@ -89,4 +89,17 @@ public class Record {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "Record{" +
+                "recordId='" + recordId + '\'' +
+                ", patientId='" + patientId + '\'' +
+                ", staffId='" + staffId + '\'' +
+                ", symptom='" + symptom + '\'' +
+                ", diagnosis='" + diagnosis + '\'' +
+                ", prescription='" + prescription + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

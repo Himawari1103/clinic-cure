@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Utils {
     public static byte[] iconToBytes(Icon icon){
@@ -38,5 +39,15 @@ public class Utils {
 
     public static LocalDateTime sqlTimestampToLocalDateTime(Timestamp timestamp){
         return timestamp.toLocalDateTime();
+    }
+
+    public static String localDateToString(LocalDate lcDate){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return lcDate.format(dtfDate);
+    }
+
+    public static LocalDate stringToLocalDate(String str){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return LocalDate.parse(str,dtfDate);
     }
 }

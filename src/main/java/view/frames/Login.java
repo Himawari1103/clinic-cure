@@ -1,11 +1,14 @@
 package view.frames;
 
-import model.db_connection.DBConnection;
-import view.components.login.component.PanelSlide;
+import view.components.login.panels.PanelSlide;
 
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
-public class Login extends javax.swing.JFrame {
+public class Login extends JFrame {
 
     public Login() {
         initComponents();
@@ -34,14 +37,31 @@ public class Login extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-
+        this.setFocusable(true);
+        addKeyBindings(this.getRootPane());
         this.setVisible(true);
+    }
+
+    private void addKeyBindings(JComponent component) {
+        component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enterPressed");
+        component.getActionMap().put("enterPressed", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                slide.enterToLogin();
+            }
+        });
+
+        // Đảm bảo các thành phần con trong frame cũng nhận sự kiện Enter
+        for (Component comp : component.getComponents()) {
+            if (comp instanceof JComponent) {
+                addKeyBindings((JComponent) comp);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         slide = new PanelSlide();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);

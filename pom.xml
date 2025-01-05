@@ -34,11 +34,12 @@
             <artifactId>miglayout</artifactId>
             <version>3.7.4</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/de.mkammerer/argon2-jvm -->
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
+            <groupId>de.mkammerer</groupId>
+            <artifactId>argon2-jvm</artifactId>
+            <version>2.11</version>
         </dependency>
 
 

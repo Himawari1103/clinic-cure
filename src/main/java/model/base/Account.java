@@ -71,4 +71,15 @@ public class Account {
     public void setAvatar(Icon avatar) {
         this.avatar = avatar;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "accountId='" + accountId + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", accountType=" + accountType +
+                ", avatar=" + avatar +
+                '}';
+    }
 }

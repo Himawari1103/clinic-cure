@@ -3,6 +3,8 @@ package model.base;
 import constants.Gender;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class Patient {
@@ -91,5 +93,24 @@ public class Patient {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "patientId='" + patientId + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", gender=" + gender +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", nation='" + nation + '\'' +
+                ", occupation='" + occupation + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
+
+    public Object[] toObjects(){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return new Object[]{patientId, fullName, String.valueOf(LocalDate.now().getYear() - dateOfBirth.getYear()), dateOfBirth.format(dtfDate), gender.toString(), phoneNumber, nation, occupation, address};
     }
 }

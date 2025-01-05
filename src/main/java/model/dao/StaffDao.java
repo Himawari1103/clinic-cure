@@ -23,15 +23,27 @@ public class StaffDao implements Dao<Staff> {
     public int insert(Staff value) {
         Connection c = DBConnection.getConnection();
         int rs = 0;
-        String sql = "INSERT INTO staffs (staffId, fullName, phoneNumber, email, role, speciality) VALUES (?, ?, ?, ?, ?, ?);";
+
         try {
-            PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setString(1, value.getStaffId());
-            stmt.setString(2, value.getFullName());
-            stmt.setString(3, value.getPhoneNumber());
-            stmt.setString(4, value.getEmail());
-            stmt.setString(5, value.getRole().toString());
-            stmt.setString(6, value.getSpeciality().toString());
+            PreparedStatement stmt;
+            if (value.getSpeciality() != null) {
+                String sql = "INSERT INTO staffs (staffId, fullName, phoneNumber, email, role, speciality) VALUES (?, ?, ?, ?, ?, ?);";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(1, value.getStaffId());
+                stmt.setString(2, value.getFullName());
+                stmt.setString(3, value.getPhoneNumber());
+                stmt.setString(4, value.getEmail());
+                stmt.setString(5, value.getRole().toString());
+                stmt.setString(6, value.getSpeciality().toString());
+            } else {
+                String sql = "INSERT INTO staffs (staffId, fullName, phoneNumber, email, role) VALUES (?, ?, ?, ?, ?);";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(1, value.getStaffId());
+                stmt.setString(2, value.getFullName());
+                stmt.setString(3, value.getPhoneNumber());
+                stmt.setString(4, value.getEmail());
+                stmt.setString(5, value.getRole().toString());
+            }
 
             rs = stmt.executeUpdate();
         } catch (SQLException e) {
@@ -46,16 +58,26 @@ public class StaffDao implements Dao<Staff> {
     public int update(Staff value) {
         Connection c = DBConnection.getConnection();
         int rs = 0;
-        String sql = "UPDATE staffs SET fullName = ?, phoneNumber = ?, email = ?, role = ?, speciality = ? WHERE staffId = ?;";
         try {
-            PreparedStatement stmt = c.prepareStatement(sql);
-            stmt.setString(6, value.getStaffId());
-            stmt.setString(1, value.getFullName());
-            stmt.setString(2, value.getPhoneNumber());
-            stmt.setString(3, value.getEmail());
-            stmt.setString(4, value.getRole().toString());
-            stmt.setString(5, value.getSpeciality().toString());
-
+            PreparedStatement stmt;
+            if (value.getSpeciality() != null) {
+                String sql = "UPDATE staffs SET fullName = ?, phoneNumber = ?, email = ?, role = ?, speciality = ? WHERE staffId = ?;";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(6, value.getStaffId());
+                stmt.setString(1, value.getFullName());
+                stmt.setString(2, value.getPhoneNumber());
+                stmt.setString(3, value.getEmail());
+                stmt.setString(4, value.getRole().toString());
+                stmt.setString(5, value.getSpeciality().toString());
+            } else {
+                String sql = "UPDATE staffs SET fullName = ?, phoneNumber = ?, email = ?, role = ? WHERE staffId = ?;";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(5, value.getStaffId());
+                stmt.setString(1, value.getFullName());
+                stmt.setString(2, value.getPhoneNumber());
+                stmt.setString(3, value.getEmail());
+                stmt.setString(4, value.getRole().toString());
+            }
             rs = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -127,7 +149,7 @@ public class StaffDao implements Dao<Staff> {
                 String phoneNumber = rs.getString("phoneNumber");
                 String email = rs.getString("email");
                 StaffRole role = StaffRole.valueOf(rs.getString("role"));
-                StaffSpeciality speciality = StaffSpeciality.valueOf(rs.getString("speciality"));
+                StaffSpeciality speciality = rs.getString("speciality") == null ? null : StaffSpeciality.valueOf(rs.getString("speciality")) ;
 
                 staff = new Staff(staffId, fullName, phoneNumber, email, role, speciality);
 

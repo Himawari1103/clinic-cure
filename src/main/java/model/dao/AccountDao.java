@@ -20,14 +20,24 @@ public class AccountDao implements Dao<Account> {
         Connection c = DBConnection.getConnection();
         int rs = 0;
         try {
-            String sql = "insert into accounts (accountId, username, password, accountType, avatar) values = (?, ?, ?, ?, ?);";
-            PreparedStatement pstmt = c.prepareStatement(sql);
-            pstmt.setString(1, value.getAccountId());
-            pstmt.setString(2, value.getUsername());
-            pstmt.setString(3, value.getPassword());
-            pstmt.setString(4, value.getAccountType().toString());
-            pstmt.setBytes(5, Utils.iconToBytes(value.getAvatar()));
-            rs = pstmt.executeUpdate();
+            PreparedStatement stmt;
+            if (value.getAvatar() != null) {
+                String sql = "insert into accounts (accountId, username, password, accountType, avatar) values (?, ?, ?, ?, ?);";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(1, value.getAccountId());
+                stmt.setString(2, value.getUsername());
+                stmt.setString(3, value.getPassword());
+                stmt.setString(4, value.getAccountType().toString());
+                stmt.setBytes(5, Utils.iconToBytes(value.getAvatar()));
+            } else {
+                String sql = "insert into accounts (accountId, username, password, accountType) values (?, ?, ?, ?);";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(1, value.getAccountId());
+                stmt.setString(2, value.getUsername());
+                stmt.setString(3, value.getPassword());
+                stmt.setString(4, value.getAccountType().toString());
+            }
+            rs = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -41,14 +51,24 @@ public class AccountDao implements Dao<Account> {
         Connection c = DBConnection.getConnection();
         int rs = 0;
         try {
-            String sql = "UPDATE accounts SET username = ?, password = ?, accountType = ?, avatar = ? WHERE accountId = ?;";
-            PreparedStatement pstmt = c.prepareStatement(sql);
-            pstmt.setString(1, value.getUsername());
-            pstmt.setString(2, value.getPassword());
-            pstmt.setString(3, value.getAccountType().toString());
-            pstmt.setBytes(4, Utils.iconToBytes(value.getAvatar()));
-            pstmt.setString(5, value.getAccountId());
-            rs = pstmt.executeUpdate();
+            PreparedStatement stmt;
+            if (value.getAvatar() != null) {
+                String sql = "UPDATE accounts SET username = ?, password = ?, accountType = ?, avatar = ? WHERE accountId = ?;";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(1, value.getUsername());
+                stmt.setString(2, value.getPassword());
+                stmt.setString(3, value.getAccountType().toString());
+                stmt.setBytes(4, Utils.iconToBytes(value.getAvatar()));
+                stmt.setString(5, value.getAccountId());
+            } else {
+                String sql = "UPDATE accounts SET username = ?, password = ?, accountType = ? WHERE accountId = ?;";
+                stmt = c.prepareStatement(sql);
+                stmt.setString(1, value.getUsername());
+                stmt.setString(2, value.getPassword());
+                stmt.setString(3, value.getAccountType().toString());
+                stmt.setString(4, value.getAccountId());
+            }
+            rs = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -63,9 +83,9 @@ public class AccountDao implements Dao<Account> {
         int rs = 0;
         try {
             String sql = "DELETE FROM accounts WHERE accountId = ?;";
-            PreparedStatement pstmt = c.prepareStatement(sql);
-            pstmt.setString(1, value.getAccountId());
-            rs = pstmt.executeUpdate();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            stmt.setString(1, value.getAccountId());
+            rs = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -81,9 +101,9 @@ public class AccountDao implements Dao<Account> {
 
         try {
             String sql = "select * from accounts where accountId = ?;";
-            PreparedStatement pstmt = c.prepareStatement(sql);
-            pstmt.setString(1, id);
-            ResultSet rs = pstmt.executeQuery();
+            PreparedStatement stmt = c.prepareStatement(sql);
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String accountId = rs.getString("accountId");
                 String username = rs.getString("username");

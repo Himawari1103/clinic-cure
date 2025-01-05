@@ -6,14 +6,14 @@ import model.dao.AccountDao;
 public class AccountModel {
     private static Account account;
 
-    public static void create (String accountId) {
-        if(account == null) {
-            account = AccountDao.getInstance().selectById(accountId);
+    public static void create (Account account) {
+        if(AccountModel.account == null) {
+            AccountModel.account = account;
         }
     }
 
-    public static void create (Account account) {
-        AccountModel.account = account;
+    public static void reset(){
+        account = null;
     }
 
     public static Account getAccount() {

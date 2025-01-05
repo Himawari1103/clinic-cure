@@ -56,5 +56,14 @@ public class Receipt {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-}
 
+    @Override
+    public String toString() {
+        return "Receipt{" +
+                "receiptId='" + receiptId + '\'' +
+                ", recordId='" + recordId + '\'' +
+                ", amount=" + amount +
+                ", createdAt=" + createdAt +
+                '}';
+    }
+}

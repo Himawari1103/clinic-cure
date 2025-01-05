@@ -50,4 +50,14 @@ public class Appointment {
     public void setTime(LocalDateTime time) {
         this.time = time;
     }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "appointmentId='" + appointmentId + '\'' +
+                ", patientId='" + patientId + '\'' +
+                ", staffId='" + staffId + '\'' +
+                ", time=" + time +
+                '}';
+    }
 }

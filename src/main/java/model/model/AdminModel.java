@@ -26,6 +26,15 @@ public class AdminModel {
         }
     }
 
+    public static void reset(){
+        patients = null;
+        records = null;
+        staffs = null;
+        appointments = null;
+        receipts = null;
+        accounts = null;
+    }
+
     public static ArrayList<Patient> getPatients() {
         return patients;
     }

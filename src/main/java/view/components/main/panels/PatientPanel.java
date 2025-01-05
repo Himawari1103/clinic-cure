@@ -1,16 +1,16 @@
 //package view.components.main.panels;
 //
 //import model.base.Patient;
-//import view.components.main.component.Card;
+//import view.components.main.components.Card;
 //import view.components.main.dialog.Message;
 //import view.components.main.frames.Main;
 //import view.components.main.model.ModelCard;
-//import view.components.main.swing.icon.GoogleMaterialDesignIcons;
-//import view.components.main.swing.icon.IconFontSwing;
-//import view.components.main.swing.noticeboard.ModelNoticeBoard;
-//import view.components.main.swing.noticeboard.NoticeBoard;
-//import view.components.main.swing.table.EventAction;
-//import view.components.main.swing.table.Table;
+//import view.components.main.components.icon.GoogleMaterialDesignIcons;
+//import view.components.main.components.icon.IconFontSwing;
+//import view.components.main.components.noticeboard.ModelNoticeBoard;
+//import view.components.main.components.noticeboard.NoticeBoard;
+//import view.components.main.components.table.EventAction;
+//import view.components.main.components.table.Table;
 //
 //import javax.swing.*;
 //import java.awt.*;

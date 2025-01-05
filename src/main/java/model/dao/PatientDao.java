@@ -19,7 +19,7 @@ public class PatientDao implements Dao<Patient> {
         Connection c = DBConnection.getConnection();
         int rs = 0;
         try {
-            String sql = "insert into patients (patientId, fullName, dateOfBirth, gender, phoneNumber, nation, occupation, address) values = (?, ?, ?, ?, ?, ?, ?, ?);";
+            String sql = "insert into patients (patientId, fullName, dateOfBirth, gender, phoneNumber, nation, occupation, address) values (?, ?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setString(1, value.getPatientId());
             stmt.setString(2, value.getFullName());
