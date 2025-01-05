@@ -4,6 +4,18 @@
  */
 package view.panels;
 
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import view.components.main.components.scrollbar.ScrollBarCustom;
+
 /**
  *
  * @author Chi Cute
@@ -17,6 +29,64 @@ public class ReportManagement extends javax.swing.JPanel {
         initComponents();
     }
 
+    public void setComboBoxCustomDisabled(JComboBox<?> comboBox, boolean disabled) {
+        if (disabled) {
+            comboBox.setEnabled(false);
+            comboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setBackground(Color.GRAY);
+                    label.setForeground(Color.BLACK);
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
+        } else {
+            comboBox.setEnabled(true);
+            comboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setBackground(Color.WHITE);
+                    label.setForeground(Color.BLACK);
+                    if (isSelected) {
+                        label.setBackground(Color.LIGHT_GRAY);
+                    }
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
+            comboBox.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+                @Override
+                public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent e) {
+                    JComponent popup = (JComponent) comboBox.getUI().getAccessibleChild(comboBox, 0);
+                    if (popup instanceof JPopupMenu) {
+                        for (Component component : popup.getComponents()) {
+                            if (component instanceof JScrollPane scrollPane) {
+
+                                scrollPane.getViewport().setBackground(Color.WHITE);
+                                scrollPane.setVerticalScrollBar(new ScrollBarCustom());
+                                JPanel p = new JPanel();
+                                p.setBackground(Color.WHITE);
+                                scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent e) {
+                }
+
+                @Override
+                public void popupMenuCanceled(javax.swing.event.PopupMenuEvent e) {
+                }
+            });
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

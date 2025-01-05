@@ -37,7 +37,7 @@ public class PatientsManagement extends javax.swing.JPanel {
         disableEditingText();
         disableSupportButton();
 
-        initTable();
+       // initTable();
         patientTable.fixTable(jScrollPane1);
 
     }
@@ -769,13 +769,13 @@ public class PatientsManagement extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_patientPhoneNumberTextFieldActionPerformed
 
-    private void addPatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPatientButtonActionPerformed
+    private void addPatientButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         disableRemainMainButton(addPatientButton);
         enableSupportButton();
         enableEditingText();
     }
 
-    private void deletePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePatientButtonActionPerformed
+    private void deletePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                    
         Message obj = new Message(MainView.getFrames()[0], true);
         String ms = "";
         boolean withAction;
@@ -794,21 +794,21 @@ public class PatientsManagement extends javax.swing.JPanel {
         }
     }
 
-    private void updatePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatePatientButtonActionPerformed
+    private void updatePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                    
         disableRemainMainButton(updatePatientButton);
         enableSupportButton();
         enableEditingTextWithOutId();
     }
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
         enableMainButton();
         disableSupportButton();
         disableEditingText();
     }
 
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         // TODO add your handling code here:
-    }//GEN-LAST:event_saveButtonActionPerformed
+    }                                          
 
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         // TODO add your handling code here:
@@ -826,9 +826,9 @@ public class PatientsManagement extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchPatientPhoneNumberTextFieldActionPerformed
 
-    private void searchPatientsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchPatientsButtonActionPerformed
+    private void searchPatientsButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                     
         // TODO add your handling code here:
-    }//GEN-LAST:event_searchPatientsButtonActionPerformed
+    }                                                    
 
     private void delSearchPatientsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchPatientsButtonActionPerformed
         // TODO add your handling code here:
