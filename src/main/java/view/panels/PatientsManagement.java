@@ -4,33 +4,38 @@
  */
 package view.panels;
 
+import constants.AdminAction;
 import constants.Gender;
 import controller.main.PatientController;
 import model.base.Patient;
-import model.dao.PatientDao;
 import util.Utils;
 import view.components.main.components.scrollbar.ScrollBarCustom;
 import view.components.main.components.table.Table;
 import view.components.main.dialog.Message;
+import view.components.main.dialog.MessageResultAdminAction;
 import view.frames.MainView;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
  * @author Chi Cute
  */
 public class PatientsManagement extends javax.swing.JPanel {
-
     Patient selectedPatient = null;
     int indexSelectedPatient = -1;
+    AdminAction currentAction = null;
+
+    DefaultTableModel defaultTableModelMain;
+//    DefaultTableModel defaultTableModelOrder;
 
     public PatientsManagement() {
         initComponents();
@@ -38,8 +43,9 @@ public class PatientsManagement extends javax.swing.JPanel {
         disableSupportButton();
 
         initTable();
+        defaultTableModelMain = (DefaultTableModel) patientTable.getModel();
+//        defaultTableModelOrder =  (DefaultTableModel) patientTable.getModel();
         patientTable.fixTable(jScrollPane1);
-
     }
 
     public void enableEditingText() {   // bật edit tất cả các textField
@@ -104,6 +110,8 @@ public class PatientsManagement extends javax.swing.JPanel {
 
         patientFullNameTextField.setText(patient.getFullName());
 
+        patientAgeTextField.setText(String.valueOf(LocalDate.now().getYear() - patient.getDateOfBirth().getYear()));
+
         date.setText(String.valueOf(patient.getDateOfBirth().getDayOfMonth()));
 
         month.setSelectedItem(String.valueOf(patient.getDateOfBirth().getMonth()));
@@ -114,33 +122,39 @@ public class PatientsManagement extends javax.swing.JPanel {
 
         patientGenderComboBox.setSelectedItem(patient.getGender());
 
-        patientNationTextField.setText(patient.getPatientId());
+        patientNationTextField.setText(patient.getNation());
 
-        patientOccupationTextField.setText(patient.getPatientId());
+        patientOccupationTextField.setText(patient.getOccupation());
 
-        patientPhoneNumberTextField.setText(patient.getPatientId());
+        patientPhoneNumberTextField.setText(patient.getPhoneNumber());
     }
 
-    public void clearText() {   // xóa hết giá trị của textField
+    public void clearText(){
         patientIDTextField.setText("");
+        clearTextWithoutId();
+    }
 
+    public void clearTextWithoutId() {   // xóa hết giá trị của textField
         patientFullNameTextField.setText("");
-
         date.setText("");
-
         month.setSelectedItem("1");
-
         year.setText("");
-
         patientAddressTextField.setText("");
-
         patientGenderComboBox.setSelectedItem("NAM");
-
         patientNationTextField.setText("");
-
         patientOccupationTextField.setText("");
-
         patientPhoneNumberTextField.setText("");
+    }
+
+    public boolean hasTextFieldEmpty() {
+        return patientIDTextField.getText().trim().isEmpty()
+                || patientFullNameTextField.getText().trim().isEmpty()
+                || date.getText().trim().isEmpty()
+                || year.getText().trim().isEmpty()
+                || patientAddressTextField.getText().trim().isEmpty()
+                || patientNationTextField.getText().trim().isEmpty()
+                || patientOccupationTextField.getText().trim().isEmpty()
+                || patientPhoneNumberTextField.getText().trim().isEmpty();
     }
 
     public void disableSupportButton() {    // disable các nút hoàn tác, hủy, lưu
@@ -172,6 +186,21 @@ public class PatientsManagement extends javax.swing.JPanel {
         addPatientButton.setEnabled(true);
         updatePatientButton.setEnabled(true);
         deletePatientButton.setEnabled(true);
+    }
+
+    public Patient getPatientFromTextField() {
+        String patientId = patientIDTextField.getText().trim();
+        String fullName = patientFullNameTextField.getText().trim();
+        LocalDate dateOfBirth = LocalDate.of(Integer.parseInt(year.getText().trim()), Integer.parseInt(Objects.requireNonNull(month.getSelectedItem()).toString()), Integer.parseInt(date.getText().trim()));
+        String address = patientAddressTextField.getText().trim();
+        Gender gender = Gender.getGenderFromDetail(Objects.requireNonNull(patientGenderComboBox.getSelectedItem()).toString());
+        String nation = patientNationTextField.getText().trim();
+        String occupation = patientOccupationTextField.getText().trim();
+        String phoneNumber = patientPhoneNumberTextField.getText().trim();
+
+        Patient patient = new Patient(patientId, fullName, dateOfBirth, gender, phoneNumber, nation, occupation, address);
+        System.out.println(patient);
+        return patient;
     }
 
     public void setComboBoxCustomDisabled(JComboBox<?> comboBox, boolean disabled) {
@@ -252,33 +281,15 @@ public class PatientsManagement extends javax.swing.JPanel {
                         String patientId = (String) patientTable.getValueAt(indexSelectedPatient, 0);
                         String fullName = (String) patientTable.getValueAt(indexSelectedPatient, 1);
                         LocalDate dateOfBirth = Utils.stringToLocalDate((String) patientTable.getValueAt(indexSelectedPatient, 3));
-                        Gender gender = Gender.valueOf((String) patientTable.getValueAt(indexSelectedPatient, 4));
+                        Gender gender = Gender.getGenderFromDetail((String) patientTable.getValueAt(indexSelectedPatient, 4));
                         String nation = (String) patientTable.getValueAt(indexSelectedPatient, 5);
                         String phoneNumber = (String) patientTable.getValueAt(indexSelectedPatient, 6);
                         String occupation = (String) patientTable.getValueAt(indexSelectedPatient, 7);
                         String address = (String) patientTable.getValueAt(indexSelectedPatient, 8);
 
-//                        String patientId = patientIDTextField.getText().trim();
-//                        String fullName = patientFullNameTextField.getText().trim();
-//                        LocalDate dateOfBirth = LocalDate.of(Integer.parseInt(year.getText().trim()), Integer.parseInt(Objects.requireNonNull(month.getSelectedItem()).toString()), Integer.parseInt(date.getText().trim()));
-//                        String address = patientAddressTextField.getText().trim();
-//                        Gender gender = Gender.valueOf(Objects.requireNonNull(patientGenderComboBox.getSelectedItem()).toString());
-//                        String nation = patientNationTextField.getText().trim();
-//                        String occupation = patientOccupationTextField.getText().trim();
-//                        String phoneNumber = patientPhoneNumberTextField.getText().trim();
                         selectedPatient = new Patient(patientId, fullName, dateOfBirth, gender, phoneNumber, nation, occupation, address);
 
-                        patientIDTextField.setText(selectedPatient.getPatientId());
-                        patientFullNameTextField.setText(selectedPatient.getFullName());
-                        patientAgeTextField.setText((String) patientTable.getValueAt(indexSelectedPatient, 2));
-                        date.setText(String.valueOf(selectedPatient.getDateOfBirth().getDayOfMonth()));
-                        month.setSelectedItem(String.valueOf(selectedPatient.getDateOfBirth().getMonth()));
-                        year.setText(String.valueOf(selectedPatient.getDateOfBirth().getYear()));
-                        patientAddressTextField.setText(selectedPatient.getAddress());
-                        patientGenderComboBox.setSelectedItem(selectedPatient.getGender());
-                        patientNationTextField.setText(selectedPatient.getNation());
-                        patientOccupationTextField.setText(selectedPatient.getOccupation());
-                        patientPhoneNumberTextField.setText(selectedPatient.getPhoneNumber());
+                        setText(selectedPatient);
                     }
                 }
             }
@@ -289,11 +300,95 @@ public class PatientsManagement extends javax.swing.JPanel {
         PatientController.addRowPatientTable(patientTable);
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    ArrayList<Object[]> listRemovedRows = new ArrayList<>();
+
+    public void searchByPatientIdInsert() {
+        String subPatientId = searchPatientIDTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) patientTable.getModel();
+        for (int i = 0; i < defaultTableModel.getRowCount(); i++) {
+            if (!((String) defaultTableModel.getValueAt(i, 0)).contains(subPatientId)) {
+                listRemovedRows.add(patientTable.getRow(i));
+                patientTable.deleteRow(i);
+                i--;
+            }
+        }
+    }
+
+    public void searchByPatientIdRemove() {
+        String subPatientId = searchPatientIDTextField.getText().trim();
+        String subPatientPhoneNumber = searchPatientPhoneNumberTextField.getText().trim();
+        String subPatientName = searchPatientNameTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) patientTable.getModel();
+        if (!listRemovedRows.isEmpty()) {
+            for (int i = 0; i < listRemovedRows.size(); i++) {
+                if (((String) listRemovedRows.get(i)[0]).contains(subPatientId)
+                        && ((String) listRemovedRows.get(i)[6]).contains(subPatientPhoneNumber)
+                        && ((String) listRemovedRows.get(i)[1]).contains(subPatientName)) {
+                    defaultTableModel.addRow(listRemovedRows.remove(i));
+                    i--;
+                }
+            }
+        }
+    }
+
+    public void searchByPatientPhoneNumberInsert() {
+        String subPatientId = searchPatientPhoneNumberTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) patientTable.getModel();
+        for (int i = 0; i < defaultTableModel.getRowCount(); i++) {
+            if (!((String) defaultTableModel.getValueAt(i, 6)).contains(subPatientId)) {
+                listRemovedRows.add(patientTable.getRow(i));
+                patientTable.deleteRow(i);
+                i--;
+            }
+        }
+    }
+
+    public void searchByPatientPhoneNumberRemove() {
+        String subPatientId = searchPatientIDTextField.getText().trim();
+        String subPatientPhoneNumber = searchPatientPhoneNumberTextField.getText().trim();
+        String subPatientName = searchPatientNameTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) patientTable.getModel();
+        if (!listRemovedRows.isEmpty()) {
+            for (int i = 0; i < listRemovedRows.size(); i++) {
+                if (((String) listRemovedRows.get(i)[0]).contains(subPatientId)
+                        && ((String) listRemovedRows.get(i)[6]).contains(subPatientPhoneNumber)
+                        && ((String) listRemovedRows.get(i)[1]).contains(subPatientName)) {
+                    defaultTableModel.addRow(listRemovedRows.remove(i));
+                    i--;
+                }
+            }
+        }
+    }
+
+    public void searchByNameInsert() {
+        String subPatientId = searchPatientNameTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) patientTable.getModel();
+        for (int i = 0; i < defaultTableModel.getRowCount(); i++) {
+            if (!((String) defaultTableModel.getValueAt(i, 1)).contains(subPatientId)) {
+                listRemovedRows.add(patientTable.getRow(i));
+                patientTable.deleteRow(i);
+                i--;
+            }
+        }
+    }
+
+    public void searchByNameRemove() {
+        String subPatientId = searchPatientIDTextField.getText().trim();
+        String subPatientPhoneNumber = searchPatientPhoneNumberTextField.getText().trim();
+        String subPatientName = searchPatientNameTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) patientTable.getModel();
+        if (!listRemovedRows.isEmpty()) {
+            for (int i = 0; i < listRemovedRows.size(); i++) {
+                if (((String) listRemovedRows.get(i)[0]).contains(subPatientId)
+                        && ((String) listRemovedRows.get(i)[6]).contains(subPatientPhoneNumber)
+                        && ((String) listRemovedRows.get(i)[1]).contains(subPatientName)) {
+                    defaultTableModel.addRow(listRemovedRows.remove(i));
+                    i--;
+                }
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -351,13 +446,59 @@ public class PatientsManagement extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         patientTable = new Table();
         searchPatientsButton = new javax.swing.JButton();
-        delSearchPatientsButton = new javax.swing.JButton();
+
+        clearSearchPatientsButton = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         searchPatientIDTextField = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         searchPatientNameTextField = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         searchPatientPhoneNumberTextField = new javax.swing.JTextField();
+        searchPatientIDTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchByPatientIdInsert();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchByPatientIdRemove();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        searchPatientNameTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchByNameInsert();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchByNameRemove();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        searchPatientPhoneNumberTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchByPatientPhoneNumberInsert();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchByPatientPhoneNumberRemove();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
 
         setBackground(new java.awt.Color(229, 245, 255));
 
@@ -504,9 +645,7 @@ public class PatientsManagement extends javax.swing.JPanel {
             }
         });
 
-
         year.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        year.setText("2025");
 
         month.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}));
 
@@ -636,7 +775,7 @@ public class PatientsManagement extends javax.swing.JPanel {
 
                 },
                 new String[]{
-                        "ID", "Họ tên", "Tuổi", "Ngày sinh", "Giới tính", "Dân tộc", "Điện thoại", "Nghề nghiệp", "Địa chỉ"
+                        "ID", "Họ tên", "Tuổi", "Ngày sinh", "Giới tính", "Điện thoại", "Dân tộc", "Nghề nghiệp", "Địa chỉ"
                 }
         ) {
             boolean[] canEdit = new boolean[]{
@@ -661,14 +800,14 @@ public class PatientsManagement extends javax.swing.JPanel {
                 searchPatientsButtonActionPerformed(evt);
             }
         });
-        delSearchPatientsButton.setBackground(new java.awt.Color(102, 255, 255));
-        delSearchPatientsButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        delSearchPatientsButton.setText("Xóa");
-        delSearchPatientsButton.setFocusPainted(false);
-        delSearchPatientsButton.setFocusable(false);
-        delSearchPatientsButton.addActionListener(new java.awt.event.ActionListener() {
+        clearSearchPatientsButton.setBackground(new java.awt.Color(102, 255, 255));
+        clearSearchPatientsButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        clearSearchPatientsButton.setText("Xóa");
+        clearSearchPatientsButton.setFocusPainted(false);
+        clearSearchPatientsButton.setFocusable(false);
+        clearSearchPatientsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                delSearchPatientsButtonActionPerformed(evt);
+                clearSearchPatientsButtonActionPerformed(evt);
             }
         });
 
@@ -712,7 +851,7 @@ public class PatientsManagement extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(searchPatientPhoneNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(delSearchPatientsButton)
+                                .addComponent(clearSearchPatientsButton)
 //                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(searchPatientsButton)
                                 .addContainerGap())
@@ -727,7 +866,7 @@ public class PatientsManagement extends javax.swing.JPanel {
                                         .addComponent(searchPatientNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel13)
                                         .addComponent(searchPatientPhoneNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(delSearchPatientsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(clearSearchPatientsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(searchPatientsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
@@ -769,32 +908,18 @@ public class PatientsManagement extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_patientPhoneNumberTextFieldActionPerformed
 
-    private void addPatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPatientButtonActionPerformed
+    private void addPatientButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        if (currentAction != AdminAction.ADD) clearText();
+        currentAction = AdminAction.ADD;
         disableRemainMainButton(addPatientButton);
         enableSupportButton();
+
+        patientIDTextField.setText(Utils.genUUID().toString());
         enableEditingText();
     }
 
-    private void deletePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePatientButtonActionPerformed
-        Message obj = new Message(MainView.getFrames()[0], true);
-        String ms = "";
-        boolean withAction;
-        if (selectedPatient == null) {
-            ms = "Không có đối tượng để xóa";
-            withAction = false;
-        } else {
-            ms = "Bạn có chắc chắn muốn xóa" + selectedPatient.getFullName() + " không?";
-            withAction = true;
-        }
-        obj.showMessage(ms, withAction);
-        if (obj.isOk()) {
-            patientTable.deleteRow(indexSelectedPatient);
-            indexSelectedPatient = -1;
-            selectedPatient = null;
-        }
-    }
-
     private void updatePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatePatientButtonActionPerformed
+        currentAction = AdminAction.UPDATE;
         disableRemainMainButton(updatePatientButton);
         enableSupportButton();
         enableEditingTextWithOutId();
@@ -804,15 +929,79 @@ public class PatientsManagement extends javax.swing.JPanel {
         enableMainButton();
         disableSupportButton();
         disableEditingText();
+
+        if (selectedPatient != null) {
+            setText(selectedPatient);
+        } else {
+            clearText();
+        }
+
+        currentAction = null;
     }
 
+
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_saveButtonActionPerformed
+        boolean rs = false;
+        if (!hasTextFieldEmpty()) {
+            switch (currentAction) {
+                case ADD -> {
+                    rs = PatientController.addPatient(getPatientFromTextField(), patientTable);
+                }
+                case UPDATE -> {
+                    rs = PatientController.updatePatient(indexSelectedPatient, getPatientFromTextField(), patientTable);
+                }
+            }
+            enableMainButton();
+            disableSupportButton();
+            disableEditingText();
+            MessageResultAdminAction messageResultAdminAction = new MessageResultAdminAction(MainView.getFrames()[0], true);
+            if (rs) {
+                messageResultAdminAction.showMessageSuccess(currentAction);
+            } else {
+                messageResultAdminAction.showMessageFail(currentAction);
+            }
+            currentAction = null;
+        } else {
+            Message ms = new Message(MainView.getFrames()[0], true);
+            ms.showMessage("Hãy nhập đầy đủ thông tin", false);
+        }
+
+    }
+
+    private void deletePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePatientButtonActionPerformed
+        currentAction = AdminAction.DELETE;
+        Message obj = new Message(MainView.getFrames()[0], true);
+        String ms = "";
+        boolean withAction;
+        if (selectedPatient == null) {
+            ms = "Không có đối tượng để xóa";
+            withAction = false;
+        } else {
+            ms = "Bạn có chắc chắn muốn xóa " + selectedPatient.getFullName() + " không?";
+            withAction = true;
+        }
+        obj.showMessage(ms, withAction);
+        if (obj.isOk()) {
+            PatientController.deletePatient(indexSelectedPatient, selectedPatient, patientTable);
+            indexSelectedPatient = -1;
+            selectedPatient = null;
+        }
+
+        currentAction = null;
+    }
 
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_saveButtonActionPerformed
+        if (selectedPatient != null) {
+            setText(selectedPatient);
+        } else {
+            if(currentAction == AdminAction.ADD){
+                clearTextWithoutId();
+            } else {
+                clearText();
+            }
+
+        }
+    }
 
     private void patientNationTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_patientNationTextFieldActionPerformed
         // TODO add your handling code here:
@@ -830,9 +1019,15 @@ public class PatientsManagement extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchPatientsButtonActionPerformed
 
-    private void delSearchPatientsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchPatientsButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_searchPatientsButtonActionPerformed
+    private void clearSearchPatientsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchPatientsButtonActionPerformed
+        clearTextSearch();
+    }
+
+    public void clearTextSearch() {
+        searchPatientIDTextField.setText("");
+        searchPatientPhoneNumberTextField.setText("");
+        searchPatientNameTextField.setText("");
+    }
 
     private void createRecordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createRecordButtonActionPerformed
         // TODO add your handling code here:
@@ -879,7 +1074,7 @@ public class PatientsManagement extends javax.swing.JPanel {
     private javax.swing.JTextField searchPatientNameTextField;
     private javax.swing.JTextField searchPatientPhoneNumberTextField;
     private javax.swing.JButton searchPatientsButton;
-    private javax.swing.JButton delSearchPatientsButton;
+    private javax.swing.JButton clearSearchPatientsButton;
     private javax.swing.JButton updatePatientButton;
     private javax.swing.JTextField year;
     // End of variables declaration//GEN-END:variables

@@ -69,11 +69,15 @@ public class RecordDao implements Dao<Record> {
         Connection c = DBConnection.getConnection();
         int rs = 0;
         try {
-            String sql = "DELETE FROM records WHERE recordId = ?;";
-            PreparedStatement stmt = c.prepareStatement(sql);
+            String sql1 = "DELETE FROM receipts WHERE recordId = ?;";
+            String sql2 = "DELETE FROM records WHERE recordId = ?;";
 
+            PreparedStatement stmt = c.prepareStatement(sql1);
             stmt.setString(1, value.getRecordId());
+            rs = stmt.executeUpdate();
 
+            stmt = c.prepareStatement(sql2);
+            stmt.setString(1, value.getRecordId());
             rs = stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

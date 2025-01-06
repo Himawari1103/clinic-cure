@@ -53,6 +53,22 @@ public class Table extends JTable {
         mod.removeRow(index);
     }
 
+    public void updateRow(int index, Object[] row){
+        DefaultTableModel mod = (DefaultTableModel) getModel();
+        for (int i = 0; i < mod.getColumnCount(); i++) {
+            mod.setValueAt(row[i],index,i);
+        }
+    }
+
+    public Object[] getRow(int index) {
+        DefaultTableModel mod = (DefaultTableModel) getModel();
+        String[] row = new String[mod.getColumnCount()];
+        for (int i = 0; i < mod.getColumnCount(); i++) {
+            row[i] = (String)mod.getValueAt(index,i);
+        }
+        return row;
+    }
+
     public void fixTable(JScrollPane scroll) {
         scroll.getViewport().setBackground(Color.WHITE);
         scroll.setVerticalScrollBar(new ScrollBarCustom());

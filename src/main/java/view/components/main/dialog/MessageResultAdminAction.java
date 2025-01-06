@@ -1,26 +1,29 @@
 package view.components.main.dialog;
 
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.TimingTarget;
-import org.jdesktop.animation.timing.TimingTargetAdapter;
+import constants.AdminAction;
 import view.components.main.components.Button;
 import view.components.main.components.icon.GoogleMaterialDesignIcons;
 import view.components.main.components.icon.IconFontSwing;
 
 import java.awt.*;
 
-public class MessageResult extends javax.swing.JDialog {
+public class MessageResultAdminAction extends javax.swing.JDialog {
 
-    public MessageResult(java.awt.Frame parent, boolean modal) {
+    public MessageResultAdminAction(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        lbIcon.setIcon(IconFontSwing.buildIcon(GoogleMaterialDesignIcons.REPORT_PROBLEM, 60, new Color(254, 86, 96), new Color(113, 74, 67)));
-        setOpacity(0f);
         getContentPane().setBackground(Color.WHITE);
     }
 
-    public void showMessage(String message) {
-        lbMessage.setText(message);
+    public void showMessageSuccess(AdminAction action) {
+        lbIcon.setIcon(IconFontSwing.buildIcon(GoogleMaterialDesignIcons.MOOD, 60, new Color(254, 86, 96), new Color(113, 74, 67)));
+        lbMessage.setText(action.getDetail() + " thành công!");
+        setVisible(true);
+    }
+
+    public void showMessageFail(AdminAction action) {
+        lbIcon.setIcon(IconFontSwing.buildIcon(GoogleMaterialDesignIcons.MOOD_BAD, 60, new Color(254, 86, 96), new Color(113, 74, 67)));
+        lbMessage.setText(action.getDetail() + " thất bại!");
         setVisible(true);
     }
 

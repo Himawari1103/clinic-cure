@@ -1,5 +1,8 @@
 package util;
 
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -10,6 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 public class Utils {
     public static byte[] iconToBytes(Icon icon){
@@ -49,5 +53,29 @@ public class Utils {
     public static LocalDate stringToLocalDate(String str){
         DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return LocalDate.parse(str,dtfDate);
+    }
+
+    public static UUID genUUID(){
+        return UUID.randomUUID();
+    }
+
+    public static String encrypt(String str){
+        String encryptString = "";
+
+        Argon2 argon2 = Argon2Factory.create();
+
+        int iterations = 3;     // Số vòng lặp
+        int memory = 65536;     // Kích thước bộ nhớ (kB)
+        int parallelism = 1;    // Số luồng xử lý song song
+
+        try {
+            encryptString = argon2.hash(iterations, memory, parallelism, str);
+
+        } finally {
+            // Giải phóng tài nguyên của Argon2
+            argon2.wipeArray(str.toCharArray());
+        }
+
+        return encryptString;
     }
 }

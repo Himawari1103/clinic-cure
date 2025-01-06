@@ -111,6 +111,6 @@ public class Patient {
 
     public Object[] toObjects(){
         DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return new Object[]{patientId, fullName, String.valueOf(LocalDate.now().getYear() - dateOfBirth.getYear()), dateOfBirth.format(dtfDate), gender.toString(), phoneNumber, nation, occupation, address};
+        return new Object[]{patientId, fullName, String.valueOf(LocalDate.now().getYear() - dateOfBirth.getYear()), dateOfBirth.format(dtfDate), gender.getDetail(), phoneNumber, nation, occupation, address};
     }
 }

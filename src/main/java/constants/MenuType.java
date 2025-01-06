@@ -1,11 +1,13 @@
 package constants;
 
 public enum MenuType {
+    REPORT("Báo cáo thống kê"),
     PATIENT("Bệnh nhân"),
     STAFF("Nhân viên"),
-    APPOINTMENT_AND_RECEIPT("Lịch hẹn và hóa đơn"),
+    APPOINTMENT("Lịch hẹn"),
+    RECEIPT("Hóa đơn"),
     RECORD("Hồ sơ"),
-    REPORT_AND_ACCOUNT("Báo cáo thống kê và tài khoản"),
+    ACCOUNT("Tài khoản"),
     EMPTY;
 
 

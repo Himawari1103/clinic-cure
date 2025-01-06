@@ -56,11 +56,13 @@ public class Menu extends javax.swing.JPanel {
     }
 
     public void initMenuItem() {
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.REPORT));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.PATIENT));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.STAFF));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.APPOINTMENT_AND_RECEIPT));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.APPOINTMENT));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.RECORD));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.REPORT_AND_ACCOUNT));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.RECEIPT));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.ACCOUNT));
     }
 
     private void addMenu(ModelMenu menu) {

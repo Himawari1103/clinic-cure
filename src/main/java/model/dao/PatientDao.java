@@ -67,8 +67,23 @@ public class PatientDao implements Dao<Patient> {
         Connection c = DBConnection.getConnection();
         int rs = 0;
         try {
-            String sql = "DELETE FROM patients WHERE patientId = ?;";
-            PreparedStatement stmt = c.prepareStatement(sql);
+            String sql1 = "DELETE FROM receipts WHERE recordId IN (SELECT recordId FROM records WHERE patientId = ?);";
+            String sql2 = "DELETE FROM records WHERE patientId = ?;";
+            String sql3 = "DELETE FROM appointments WHERE patientId = ?;";
+            String sql4 = "DELETE FROM patients WHERE patientId = ?;";
+            PreparedStatement stmt = c.prepareStatement(sql1);
+            stmt.setString(1, value.getPatientId());
+            rs = stmt.executeUpdate();
+
+            stmt = c.prepareStatement(sql2);
+            stmt.setString(1, value.getPatientId());
+            rs = stmt.executeUpdate();
+
+            stmt = c.prepareStatement(sql3);
+            stmt.setString(1, value.getPatientId());
+            rs = stmt.executeUpdate();
+
+            stmt = c.prepareStatement(sql4);
             stmt.setString(1, value.getPatientId());
             rs = stmt.executeUpdate();
         } catch (SQLException e) {
