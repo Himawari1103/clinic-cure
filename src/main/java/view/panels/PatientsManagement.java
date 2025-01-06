@@ -35,7 +35,6 @@ public class PatientsManagement extends javax.swing.JPanel {
     AdminAction currentAction = null;
 
     DefaultTableModel defaultTableModelMain;
-//    DefaultTableModel defaultTableModelOrder;
 
     public PatientsManagement() {
         initComponents();
@@ -44,7 +43,6 @@ public class PatientsManagement extends javax.swing.JPanel {
 
         initTable();
         defaultTableModelMain = (DefaultTableModel) patientTable.getModel();
-//        defaultTableModelOrder =  (DefaultTableModel) patientTable.getModel();
         patientTable.fixTable(jScrollPane1);
     }
 

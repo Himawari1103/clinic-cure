@@ -4,20 +4,216 @@
  */
 package view.panels;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import model.base.Receipt;
+import util.Utils;
+import view.components.main.components.scrollbar.ScrollBarCustom;
+
 /**
  *
  * @author Chi Cute
  */
 public class ReceiptsManagement extends javax.swing.JPanel {
 
+    Receipt selectedReceipt = null;
+    int indexSelectedReceipt = -1;
+
     /**
      * Creates new form ReceiptsManagement
      */
     public ReceiptsManagement() {
         initComponents();
+        disableEditingText();
+        disableSupportButton();
+    }
+
+    public void enableEditingText() {   // bật edit tất cả các textField
+        receiptIDTextField.setEnabled(true);
+        enableEditingTextWithOutId();
+    }
+
+    public void enableEditingTextWithOutId() {  // bật edit tất cả các textField ngoại trừ id
+        receiptDate.setEnabled(true);
+        setComboBoxCustomDisabled(receiptMonth, false);
+        receiptYear.setEnabled(true);
+        recordIDTextField.setEnabled(true);
+        amountTextField.setEnabled(true);
+    }
+
+    public void disableEditingText() {  // tắt edit tất cả các textField
+        receiptIDTextField.setEditable(false);
+        receiptIDTextField.setDisabledTextColor(Color.BLACK);
+
+        recordIDTextField.setEditable(false);
+        recordIDTextField.setDisabledTextColor(Color.BLACK);
+
+        amountTextField.setEnabled(false);
+        amountTextField.setDisabledTextColor(Color.BLACK);
+
+        receiptDate.setEnabled(false);
+        receiptDate.setDisabledTextColor(Color.BLACK);
+
+        setComboBoxCustomDisabled(receiptMonth, true);
+
+        receiptYear.setEnabled(false);
+        receiptYear.setDisabledTextColor(Color.BLACK);
+
+    }
+
+    public void setText(Receipt receipt) {  // Thiết lập giá trị của textField thông qua đối tượng được quản lý
+        receiptIDTextField.setText(receipt.getReceiptId());
+
+        recordIDTextField.setText(receipt.getRecordId());
+
+        amountTextField.setText(String.valueOf(receipt.getAmount()));
+
+        receiptDate.setText(String.valueOf(receipt.getCreatedAt().getDayOfMonth()));
+
+        receiptMonth.setSelectedItem(String.valueOf(receipt.getCreatedAt().getMonth()));
+
+        receiptYear.setText(String.valueOf(receipt.getCreatedAt().getYear()));
+    }
+
+    public void clearText() {   // xóa hết giá trị của textField
+        receiptIDTextField.setText("");
+
+        recordIDTextField.setText("");
+
+        amountTextField.setText("");
+
+        receiptDate.setText("");
+
+        receiptMonth.setSelectedItem("1");
+
+        receiptYear.setText("");
+
+    }
+
+    public void disableSupportButton() {    // disable các nút hoàn tác, hủy, lưu, chon
+        undoButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+        saveButton.setEnabled(false);
+        chooseButton.setEnabled(false);
+    }
+
+    public void enableSupportButton() { // enable các nút hoàn tác, hủy, lưu, chon
+        undoButton.setEnabled(true);
+        cancelButton.setEnabled(true);
+        saveButton.setEnabled(true);
+        chooseButton.setEnabled(true);
+    }
+
+    public void disableRemainMainButton(JButton jButton) {  // tắt các nút chức năng ngoài nút được nhấn
+        if (jButton == createReceiptButton) {
+            updateButton.setEnabled(false);
+            putOffReceiptButton.setEnabled(false);
+            printButton.setEnabled(false);
+        } else if (jButton == updateButton) {
+            createReceiptButton.setEnabled(false);
+            putOffReceiptButton.setEnabled(false);
+            printButton.setEnabled(false);
+        } else if (jButton == putOffReceiptButton) {
+            createReceiptButton.setEnabled(false);
+            updateButton.setEnabled(false);
+            printButton.setEnabled(false);
+        } else if (jButton == printButton) {
+            createReceiptButton.setEnabled(false);
+            updateButton.setEnabled(false);
+            putOffReceiptButton.setEnabled(false);
+        }
+    }
+
+    public void enableMainButton() {    // bật tất cả các nút chức năng
+        createReceiptButton.setEnabled(true);
+        updateButton.setEnabled(true);
+        putOffReceiptButton.setEnabled(true);
+        printButton.setEnabled(true);
+    }
+
+    public void setComboBoxCustomDisabled(JComboBox<?> comboBox, boolean disabled) {
+        if (disabled) {
+            comboBox.setEnabled(false);
+            comboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setBackground(Color.GRAY);
+                    label.setForeground(Color.BLACK);
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
+        } else {
+            comboBox.setEnabled(true);
+            comboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setBackground(Color.WHITE);
+                    label.setForeground(Color.BLACK);
+                    if (isSelected) {
+                        label.setBackground(Color.LIGHT_GRAY);
+                    }
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
+            comboBox.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+                @Override
+                public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent e) {
+                    JComponent popup = (JComponent) comboBox.getUI().getAccessibleChild(comboBox, 0);
+                    if (popup instanceof JPopupMenu) {
+                        for (Component component : popup.getComponents()) {
+                            if (component instanceof JScrollPane scrollPane) {
+
+                                scrollPane.getViewport().setBackground(Color.WHITE);
+                                scrollPane.setVerticalScrollBar(new ScrollBarCustom());
+                                JPanel p = new JPanel();
+                                p.setBackground(Color.WHITE);
+                                scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent e) {
+                }
+
+                @Override
+                public void popupMenuCanceled(javax.swing.event.PopupMenuEvent e) {
+                }
+            });
+        }
+    }
+
+    public Receipt getReceiptFromTextField() {
+        String receiptId = receiptIDTextField.getText().trim();
+        String recordId = recordIDTextField.getText().trim();
+        double amount = Double.parseDouble(amountTextField.getText().trim());
+        LocalDateTime createAt = null;
+        
+        return new Receipt(receiptId, recordId, amount, createAt);
     }
 
     /**
+     * /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
@@ -39,7 +235,7 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         createReceiptButton = new javax.swing.JButton();
         putOffReceiptButton = new javax.swing.JButton();
         searchReceiptButton = new javax.swing.JButton();
-        printButton = new javax.swing.JButton();
+        updateButton = new javax.swing.JButton();
         receiptDate = new javax.swing.JTextField();
         receiptMonth = new javax.swing.JComboBox<>();
         receiptYear = new javax.swing.JTextField();
@@ -47,7 +243,7 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         saveButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         undoButton = new javax.swing.JButton();
-        searchReceiptButton1 = new javax.swing.JButton();
+        printButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(229, 245, 255));
 
@@ -103,6 +299,11 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         createReceiptButton.setText("Thanh toán");
         createReceiptButton.setFocusPainted(false);
         createReceiptButton.setFocusable(false);
+        createReceiptButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createReceiptButtonActionPerformed(evt);
+            }
+        });
 
         putOffReceiptButton.setBackground(new java.awt.Color(102, 255, 255));
         putOffReceiptButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -121,11 +322,16 @@ public class ReceiptsManagement extends javax.swing.JPanel {
             }
         });
 
-        printButton.setBackground(new java.awt.Color(102, 255, 255));
-        printButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        printButton.setText("Sửa hóa đơn");
-        printButton.setFocusPainted(false);
-        printButton.setFocusable(false);
+        updateButton.setBackground(new java.awt.Color(102, 255, 255));
+        updateButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        updateButton.setText("Sửa hóa đơn");
+        updateButton.setFocusPainted(false);
+        updateButton.setFocusable(false);
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButtonActionPerformed(evt);
+            }
+        });
 
         receiptDate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
@@ -178,14 +384,14 @@ public class ReceiptsManagement extends javax.swing.JPanel {
             }
         });
 
-        searchReceiptButton1.setBackground(new java.awt.Color(102, 255, 255));
-        searchReceiptButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        searchReceiptButton1.setText("In hóa đơn");
-        searchReceiptButton1.setFocusPainted(false);
-        searchReceiptButton1.setFocusable(false);
-        searchReceiptButton1.addActionListener(new java.awt.event.ActionListener() {
+        printButton.setBackground(new java.awt.Color(102, 255, 255));
+        printButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        printButton.setText("In hóa đơn");
+        printButton.setFocusPainted(false);
+        printButton.setFocusable(false);
+        printButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchReceiptButton1ActionPerformed(evt);
+                printButtonActionPerformed(evt);
             }
         });
 
@@ -202,7 +408,7 @@ public class ReceiptsManagement extends javax.swing.JPanel {
                             .addComponent(jLabel5)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addComponent(printButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(createReceiptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -232,7 +438,7 @@ public class ReceiptsManagement extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(searchReceiptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(searchReceiptButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(printButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -264,14 +470,14 @@ public class ReceiptsManagement extends javax.swing.JPanel {
                     .addComponent(chooseButton))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(printButton)
+                    .addComponent(updateButton)
                     .addComponent(createReceiptButton)
                     .addComponent(putOffReceiptButton)
                     .addComponent(cancelButton)
                     .addComponent(saveButton)
                     .addComponent(undoButton)
                     .addComponent(searchReceiptButton)
-                    .addComponent(searchReceiptButton1))
+                    .addComponent(printButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE))
         );
@@ -308,19 +514,38 @@ public class ReceiptsManagement extends javax.swing.JPanel {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         // TODO add your handling code here:
+        disableSupportButton();
+        enableMainButton();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
         // TODO add your handling code here:
+        clearText();
     }//GEN-LAST:event_undoButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
+        disableSupportButton();
+        enableMainButton();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void searchReceiptButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchReceiptButton1ActionPerformed
+    private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_searchReceiptButton1ActionPerformed
+    }//GEN-LAST:event_printButtonActionPerformed
+
+    private void createReceiptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createReceiptButtonActionPerformed
+        // TODO add your handling code here:
+        disableRemainMainButton(createReceiptButton);
+        enableSupportButton();
+        enableEditingText();
+    }//GEN-LAST:event_createReceiptButtonActionPerformed
+
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        // TODO add your handling code here:
+        disableRemainMainButton(updateButton);
+        enableSupportButton();
+        enableEditingText();
+    }//GEN-LAST:event_updateButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -344,7 +569,7 @@ public class ReceiptsManagement extends javax.swing.JPanel {
     private javax.swing.JTextField recordIDTextField;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton searchReceiptButton;
-    private javax.swing.JButton searchReceiptButton1;
     private javax.swing.JButton undoButton;
+    private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
 }
