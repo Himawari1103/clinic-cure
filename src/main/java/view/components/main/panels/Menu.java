@@ -1,11 +1,7 @@
 package view.components.main.panels;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import constants.MenuType;
@@ -55,14 +51,46 @@ public class Menu extends javax.swing.JPanel {
         panel.setLayout(layout);
     }
 
+
+    public ImageIcon changeIconColor(ImageIcon icon, Color color) {
+        // Lấy hình ảnh gốc từ icon
+        Image originalImage = icon.getImage();
+        BufferedImage bufferedImage = new BufferedImage(
+                originalImage.getWidth(null),
+                originalImage.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB
+        );
+
+        // Tạo Graphics2D để vẽ
+        Graphics2D g2d = bufferedImage.createGraphics();
+
+        // Vẽ lại hình ảnh với màu sắc mới
+        g2d.drawImage(originalImage, 0, 0, null);
+        g2d.setComposite(AlphaComposite.SrcAtop);
+        g2d.setColor(color);
+        g2d.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+        g2d.dispose();
+
+        return new ImageIcon(bufferedImage);
+    }
+
     public void initMenuItem() {
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.REPORT));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/patient_24.png")), MenuType.PATIENT));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.STAFF));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/appointment_32.png")), MenuType.APPOINTMENT));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/record.png")), MenuType.RECORD));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.RECEIPT));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.ACCOUNT));
+        ImageIcon reportIcon = changeIconColor(new ImageIcon(getClass().getResource("/icon_panel/report.png")), Color.WHITE);
+        ImageIcon patientIcon = changeIconColor(new ImageIcon(getClass().getResource("/icon_panel/patient.png")), Color.WHITE);
+        ImageIcon staffIcon = changeIconColor(new ImageIcon(getClass().getResource("/icon_panel/staff.png")), Color.WHITE);
+        ImageIcon appointmentIcon = changeIconColor(new ImageIcon(getClass().getResource("/icon_panel/appointment.png")), Color.WHITE);
+        ImageIcon recordIcon = changeIconColor(new ImageIcon(getClass().getResource("/icon_panel/record.png")), Color.WHITE);
+        ImageIcon receiptIcon = changeIconColor(new ImageIcon(getClass().getResource("/icon_panel/receipt.png")), Color.WHITE);
+        ImageIcon accountIcon = changeIconColor(new ImageIcon(getClass().getResource("/icon_panel/account.png")), Color.WHITE);
+
+
+        addMenu(new ModelMenu(reportIcon, MenuType.REPORT));
+        addMenu(new ModelMenu(patientIcon, MenuType.PATIENT));
+        addMenu(new ModelMenu(staffIcon, MenuType.STAFF));
+        addMenu(new ModelMenu(appointmentIcon, MenuType.APPOINTMENT));
+        addMenu(new ModelMenu(recordIcon, MenuType.RECORD));
+        addMenu(new ModelMenu(receiptIcon, MenuType.RECEIPT));
+        addMenu(new ModelMenu(accountIcon, MenuType.ACCOUNT));
     }
 
     private void addMenu(ModelMenu menu) {

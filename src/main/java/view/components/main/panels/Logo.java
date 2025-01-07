@@ -15,7 +15,7 @@ public class Logo extends javax.swing.JPanel {
 
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(224, 224, 224));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon_main/logo.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon_panel/clinic-logo.png"))); // NOI18N
         jLabel1.setText(" Clinic Cure");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
