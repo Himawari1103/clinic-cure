@@ -6,6 +6,7 @@ package view.panels;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -50,8 +51,7 @@ public class RecordsMagagement extends javax.swing.JPanel {
 
         init();
         initTable();
-        defaultTableModelMain = (DefaultTableModel) recordsTable.getModel();
-        recordsTable.fixTable(jScrollPane1);
+        setTextDate(LocalDate.now());
     }
 
     public void init() {
@@ -67,6 +67,9 @@ public class RecordsMagagement extends javax.swing.JPanel {
 
     public void initTable() {
         addDataTable();
+
+        defaultTableModelMain = (DefaultTableModel) recordsTable.getModel();
+        recordsTable.fixTable(jScrollPane1);
 
         ListSelectionModel selectionModel = recordsTable.getSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -139,28 +142,23 @@ public class RecordsMagagement extends javax.swing.JPanel {
 
     public void setText(ModelRecord modelRecord) {  // Thiết lập giá trị của textField thông qua đối tượng được quản lý
         recordIDTextField.setText(modelRecord.getRecord().getRecordId());
-
         recordDoctorIDTextField.setText(modelRecord.getRecord().getStaffId());
-
         recordDoctorNameTextField.setText(modelRecord.getStaffName());
-
         recordPatientNameTextField.setText(modelRecord.getPatientName());
-
         recordPatientIDTextField.setText(modelRecord.getRecord().getPatientId());
-
         diagnosisTextField.setText(modelRecord.getRecord().getDiagnosis());
-
         symptomTextArea.setText(modelRecord.getRecord().getSymptom());
-
         prescriptionTextArea.setText(modelRecord.getRecord().getPrescription());
-
         date.setText(String.valueOf(modelRecord.getRecord().getCreatedAt().getDayOfMonth()));
-
         month.setSelectedItem(String.valueOf(modelRecord.getRecord().getCreatedAt().getMonth()));
-
         year.setText(String.valueOf(modelRecord.getRecord().getCreatedAt().getYear()));
-
         statusCombobox.setSelectedItem(modelRecord.isPaymentStatus() ? "Đã thanh toán" : "Chưa thanh toán");
+    }
+
+    public void setTextDate(LocalDate lcDate){
+        month.setSelectedItem(String.valueOf(lcDate.getMonthValue()));
+        date.setText(String.valueOf(lcDate.getDayOfMonth()));
+        year.setText(String.valueOf(lcDate.getYear()));
     }
 
     public void clearText() {   // xóa hết giá trị của textField
@@ -338,6 +336,7 @@ public class RecordsMagagement extends javax.swing.JPanel {
         diagnosisTextField = new javax.swing.JTextField();
         cancelButton = new javax.swing.JButton();
         payButton = new javax.swing.JButton();
+        payButton.setVisible(false);
         date = new javax.swing.JTextField();
         month = new javax.swing.JComboBox<>();
         year = new javax.swing.JTextField();
@@ -721,6 +720,7 @@ public class RecordsMagagement extends javax.swing.JPanel {
 
         recordIDTextField.setText(Utils.genUUID().toString());
         enableEditingText();
+        setTextDate(LocalDate.now());
     }
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed

@@ -1,11 +1,6 @@
 package view.components.main.components;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Icon;
@@ -40,6 +35,7 @@ public class MenuButton extends JButton {
         setIcon(icon);
         init();
         setBorder(new EmptyBorder(1, 20, 1, 1));
+        setFont(new Font("sansserif", Font.BOLD, 15));
     }
 
     public MenuButton(String text) {

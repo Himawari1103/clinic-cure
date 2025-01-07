@@ -56,8 +56,8 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         disableSupportButton();
 
         initTable();
-        defaultTableModelMain = (DefaultTableModel) receiptTable.getModel();
-        receiptTable.fixTable(jScrollPane2);
+
+        setTextDateTime(LocalDateTime.now());
     }
 
     public void enableEditingText() {   // bật edit tất cả các textField
@@ -183,6 +183,14 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         printButton.setEnabled(true);
     }
 
+    public void setTextDateTime(LocalDateTime lcDateTime){
+        receiptMonth.setSelectedItem(String.valueOf(lcDateTime.getMonthValue()));
+        receiptDate.setText(String.valueOf(lcDateTime.getDayOfMonth()));
+        receiptYear.setText(String.valueOf(lcDateTime.getYear()));
+        receiptHour.setText(String.valueOf(lcDateTime.getHour()));
+        receiptMinute.setText(String.valueOf(lcDateTime.getMinute()));
+    }
+
     public Receipt getReceiptFromTextField() {
         String receiptId = receiptIDTextField.getText().trim();
         String recordId = recordIDTextField.getText().trim();
@@ -262,6 +270,9 @@ public class ReceiptsManagement extends javax.swing.JPanel {
 
     public void initTable() {
         addDataTable();
+
+        defaultTableModelMain = (DefaultTableModel) receiptTable.getModel();
+        receiptTable.fixTable(jScrollPane2);
 
         ListSelectionModel selectionModel = receiptTable.getSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -689,6 +700,7 @@ public class ReceiptsManagement extends javax.swing.JPanel {
 
         receiptIDTextField.setText(Utils.genUUID().toString());
         enableEditingText();
+        setTextDateTime(LocalDateTime.now());
     }//GEN-LAST:event_createReceiptButtonActionPerformed
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed

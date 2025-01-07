@@ -66,8 +66,10 @@ public class DialogPatientChooser extends javax.swing.JDialog {
         titleLabel = new JLabel("title",SwingConstants.CENTER);
         patientTable = new Table();
         jScrollPane= new JScrollPane(patientTable);
+
         confirmButton = new JButton("OK");
-        confirmButton.setPreferredSize(new Dimension(50,50));
+        confirmButton.setPreferredSize(new Dimension(500,50));
+
         panelEventHeader = new JPanel();
         panelEventHeader.add(confirmButton);
         confirmButton.addActionListener(new ActionListener() {

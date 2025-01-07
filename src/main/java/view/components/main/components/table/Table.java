@@ -5,12 +5,8 @@ import view.components.main.components.scrollbar.ScrollBarCustom;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 
 public class Table extends JTable {
 
@@ -33,10 +29,11 @@ public class Table extends JTable {
                 setBorder(noFocusBorder);
                 com.setForeground(new Color(0, 0, 0));
                 if (selected) {
-                    com.setBackground(new Color(239, 244, 255));
+                    com.setBackground(new Color(0, 120, 215));
                 } else {
                     com.setBackground(Color.WHITE);
                 }
+
                 return com;
             }
         });

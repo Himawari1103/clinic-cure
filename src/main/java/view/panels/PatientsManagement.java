@@ -43,8 +43,8 @@ public class PatientsManagement extends javax.swing.JPanel {
         disableSupportButton();
 
         initTable();
-        defaultTableModelMain = (DefaultTableModel) patientTable.getModel();
-        patientTable.fixTable(jScrollPane1);
+
+        setTextDate(LocalDate.now());
     }
 
     public void enableEditingText() {   // bật edit tất cả các textField
@@ -189,6 +189,12 @@ public class PatientsManagement extends javax.swing.JPanel {
         deletePatientButton.setEnabled(true);
     }
 
+    public void setTextDate(LocalDate lcDate){
+        month.setSelectedItem(String.valueOf(lcDate.getMonthValue()));
+        date.setText(String.valueOf(lcDate.getDayOfMonth()));
+        year.setText(String.valueOf(lcDate.getYear()));
+    }
+
     public Patient getPatientFromTextField() {
         String patientId = patientIDTextField.getText().trim();
         String fullName = patientFullNameTextField.getText().trim();
@@ -237,7 +243,6 @@ public class PatientsManagement extends javax.swing.JPanel {
                     if (popup instanceof JPopupMenu) {
                         for (Component component : popup.getComponents()) {
                             if (component instanceof JScrollPane scrollPane) {
-
                                 scrollPane.getViewport().setBackground(Color.WHITE);
                                 scrollPane.setVerticalScrollBar(new ScrollBarCustom());
                                 JPanel p = new JPanel();
@@ -269,6 +274,9 @@ public class PatientsManagement extends javax.swing.JPanel {
 
     public void initTable() {
         addDataTable();
+
+        defaultTableModelMain = (DefaultTableModel) patientTable.getModel();
+        patientTable.fixTable(jScrollPane1);
 
         ListSelectionModel selectionModel = patientTable.getSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -917,6 +925,7 @@ public class PatientsManagement extends javax.swing.JPanel {
 
         patientIDTextField.setText(Utils.genUUID().toString());
         enableEditingText();
+        setTextDate(LocalDate.now());
     }
 
     private void updatePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatePatientButtonActionPerformed

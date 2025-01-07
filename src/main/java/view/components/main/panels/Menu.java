@@ -57,16 +57,16 @@ public class Menu extends javax.swing.JPanel {
 
     public void initMenuItem() {
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.REPORT));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.PATIENT));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/patient_24.png")), MenuType.PATIENT));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.STAFF));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.APPOINTMENT));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.RECORD));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/appointment_32.png")), MenuType.APPOINTMENT));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/record.png")), MenuType.RECORD));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.RECEIPT));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/icon_main/14.png")), MenuType.ACCOUNT));
     }
 
     private void addMenu(ModelMenu menu) {
-        panel.add(new MenuItem(menu, getEventMenu(), event, menu.getMenuType()), "h 40!");
+        panel.add(new MenuItem(menu, getEventMenu(), event, menu.getMenuType()), "h 60!");
     }
 
     private EventMenu getEventMenu() {
@@ -106,7 +106,7 @@ public class Menu extends javax.swing.JPanel {
 
         sp = new javax.swing.JScrollPane();
         panel = new javax.swing.JPanel();
-        profile1 = new Profile();
+        logo1 = new Logo();
 
         sp.setBorder(null);
         sp.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -117,12 +117,12 @@ public class Menu extends javax.swing.JPanel {
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 312, Short.MAX_VALUE)
+                panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 312, Short.MAX_VALUE)
         );
         panelLayout.setVerticalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 523, Short.MAX_VALUE)
+                panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 523, Short.MAX_VALUE)
         );
 
         sp.setViewportView(panel);
@@ -130,16 +130,17 @@ public class Menu extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-            .addComponent(profile1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                        .addComponent(logo1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(profile1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(logo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+//                                .addGap(30)
+                                .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -155,7 +156,7 @@ public class Menu extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel panel;
-    private Profile profile1;
+    private Logo logo1;
     private javax.swing.JScrollPane sp;
     // End of variables declaration//GEN-END:variables
 }

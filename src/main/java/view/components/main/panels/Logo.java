@@ -1,8 +1,8 @@
 package view.components.main.panels;
 
-public class Profile extends javax.swing.JPanel {
+public class Logo extends javax.swing.JPanel {
 
-    public Profile() {
+    public Logo() {
         initComponents();
         setOpaque(false);
     }

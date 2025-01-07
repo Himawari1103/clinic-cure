@@ -2,9 +2,11 @@ package util;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import view.components.main.components.scrollbar.ScrollBarCustom;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -90,12 +92,70 @@ public class Utils {
 
         try {
             encryptString = argon2.hash(iterations, memory, parallelism, str);
-
         } finally {
-            // Giải phóng tài nguyên của Argon2
             argon2.wipeArray(str.toCharArray());
         }
-
+        System.out.println(encryptString);
+        System.out.println(verifyPassword(encryptString,str));
         return encryptString;
+    }
+
+    public static boolean verifyPassword(String pwDB, String pw){
+        return Argon2Factory.create().verify(pwDB,pw);
+    }
+
+    public static void setComboBoxCustomDisabled(JComboBox<?> comboBox, boolean disabled) {
+        if (disabled) {
+            comboBox.setEnabled(false);
+            comboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setBackground(Color.GRAY);
+                    label.setForeground(Color.BLACK);
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
+        } else {
+            comboBox.setEnabled(true);
+            comboBox.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setBackground(Color.WHITE);
+                    label.setForeground(Color.BLACK);
+                    if (isSelected) label.setBackground(Color.LIGHT_GRAY);
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
+            comboBox.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+                @Override
+                public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent e) {
+                    JComponent popup = (JComponent) comboBox.getUI().getAccessibleChild(comboBox, 0);
+                    if (popup instanceof JPopupMenu) {
+                        for (Component component : popup.getComponents()) {
+                            if (component instanceof JScrollPane scrollPane) {
+                                scrollPane.getViewport().setBackground(Color.WHITE);
+                                scrollPane.setVerticalScrollBar(new ScrollBarCustom());
+                                JPanel p = new JPanel();
+                                p.setBackground(Color.WHITE);
+                                scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent e) {
+                }
+
+                @Override
+                public void popupMenuCanceled(javax.swing.event.PopupMenuEvent e) {
+                }
+            });
+        }
     }
 }

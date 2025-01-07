@@ -2,9 +2,12 @@ package model.base;
 
 
 import constants.AccountType;
+import util.Utils;
 
 import javax.swing.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Account {
     private String accountId;
@@ -79,14 +82,36 @@ public class Account {
         this.avatar = avatar;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
                 "accountId='" + accountId + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 ", accountType=" + accountType +
+                ", createdAt=" + createdAt +
                 ", avatar=" + avatar +
                 '}';
+    }
+
+    public String[] toStrings(){
+        return new String[]{accountId, username, password, email, accountType.getDetail(), Utils.localDateTimeToString(createdAt)};
     }
 }
