@@ -23,7 +23,7 @@ public class TestDAO {
         StaffDao staffDao = StaffDao.getInstance();
         for (int i = 10; i < 20; i++) {
             String accountID = UUID.randomUUID().toString();
-            accountDao.insert(new Account(accountID, String.valueOf(i), String.valueOf(i), AccountType.ADMIN));
+            accountDao.insert(new Account(accountID, String.valueOf(i), String.valueOf(i), String.valueOf(i), AccountType.ADMIN, LocalDateTime.now()));
 //            accountDao.update(new Account(accountID, String.valueOf(i+10), String.valueOf(i+10), AccountType.STAFF));
 //            accountDao.delete(new Account(accountID, String.valueOf(i), String.valueOf(i), AccountType.ADMIN));
 

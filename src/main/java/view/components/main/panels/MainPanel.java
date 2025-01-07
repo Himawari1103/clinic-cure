@@ -1,8 +1,8 @@
 package view.components.main.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 
 public class MainPanel extends javax.swing.JPanel {
 
@@ -10,7 +10,8 @@ public class MainPanel extends javax.swing.JPanel {
         initComponents();
         setOpaque(false);
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(10, 20, 10, 20));
+//        setBorder(new EmptyBorder(10, 20, 10, 20));
+        setBorder(new MatteBorder(10, 20, 10, 20, Color.WHITE));
     }
 
     public void showForm(Component form) {

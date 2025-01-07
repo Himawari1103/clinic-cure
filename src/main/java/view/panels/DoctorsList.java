@@ -4,6 +4,8 @@
  */
 package view.panels;
 
+import view.components.main.components.table.Table;
+
 /**
  *
  * @author Chi Cute
@@ -27,9 +29,9 @@ public class DoctorsList extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        doctorTable = new Table();
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        doctorTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -45,9 +47,9 @@ public class DoctorsList extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setFocusable(false);
-        jTable1.setGridColor(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(jTable1);
+        doctorTable.setFocusable(false);
+        doctorTable.setGridColor(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setViewportView(doctorTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -64,6 +66,15 @@ public class DoctorsList extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private Table doctorTable;
     // End of variables declaration//GEN-END:variables
+
+
+    public Table getDoctorTable() {
+        return doctorTable;
+    }
+
+    public void setDoctorTable(Table doctorTable) {
+        this.doctorTable = doctorTable;
+    }
 }

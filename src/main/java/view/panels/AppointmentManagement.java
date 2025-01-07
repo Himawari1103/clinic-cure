@@ -7,17 +7,23 @@ package view.panels;
 import java.awt.Color;
 import java.awt.Component;
 import java.time.LocalDateTime;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import java.util.Objects;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
+import constants.AdminAction;
+import controller.main.AppointmentController;
 import model.base.Appointment;
+import util.Utils;
 import view.components.main.components.scrollbar.ScrollBarCustom;
+import view.components.main.components.table.Table;
+import view.components.main.dialog.DialogPatientChooser;
+import view.components.main.dialog.DialogStaffIsDoctorChooser;
+import view.components.main.dialog.Message;
+import view.components.main.dialog.MessageResultAdminAction;
+import view.frames.MainView;
 
 /**
  *
@@ -26,12 +32,63 @@ import view.components.main.components.scrollbar.ScrollBarCustom;
 public class AppointmentManagement extends javax.swing.JPanel {
 
     Appointment selectedAppointment = null;
+    String selectedPatientName = "";
+    String selectedStaffName = "";
     int indexSelectedAppointment = -1;
+    AdminAction currentAction = null;
+
+    DefaultTableModel defaultTableModelMain;
 
     public AppointmentManagement() {
         initComponents();
         disableEditingText();
         disableSupportButton();
+
+        init();
+        initTable();
+        defaultTableModelMain = (DefaultTableModel) appointmentsTable.getModel();
+        appointmentsTable.fixTable(jScrollPane1);
+    }
+
+    public void init(){
+        patientNameTextField.setBackground(new Color(220,223,228));
+        doctorNameTextField.setBackground(new Color(220,223,228));
+    }
+
+    int debug = 1;
+    public void addDataTable() {
+        AppointmentController.addRowAppointmentTable(appointmentsTable);
+        System.out.println(debug++);
+    }
+
+    public void initTable() {
+        addDataTable();
+
+        ListSelectionModel selectionModel = appointmentsTable.getSelectionModel();
+        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    indexSelectedAppointment = appointmentsTable.getSelectedRow();
+                    if (indexSelectedAppointment != -1) {
+                        String appointmentId = (String) appointmentsTable.getValueAt(indexSelectedAppointment, 0);
+                        String patientId = (String) appointmentsTable.getValueAt(indexSelectedAppointment, 1);
+                        String patientName = (String) appointmentsTable.getValueAt(indexSelectedAppointment, 2);
+                        String staffId = (String) appointmentsTable.getValueAt(indexSelectedAppointment, 3);
+                        String staffName = (String) appointmentsTable.getValueAt(indexSelectedAppointment, 4);
+                        LocalDateTime time = Utils.stringToLocalDateTimeWithTime((String)appointmentsTable.getValueAt(indexSelectedAppointment, 5));
+
+                        selectedAppointment = new Appointment(appointmentId, patientId, staffId, time);
+                        selectedPatientName = patientName;
+                        selectedStaffName = staffName;
+
+                        setText(selectedAppointment, patientName, staffName);
+                    }
+                }
+            }
+        });
     }
 
     public void enableEditingText() {   // bật edit tất cả các textField
@@ -76,39 +133,44 @@ public class AppointmentManagement extends javax.swing.JPanel {
 
     }
 
-    public void setText(Appointment appointment) {  // Thiết lập giá trị của textField thông qua đối tượng được quản lý
+    public void setText(Appointment appointment, String patientName, String staffName) {  // Thiết lập giá trị của textField thông qua đối tượng được quản lý
         appointmentIDTextField.setText(appointment.getAppointmentId());
 
         patientIDTextField.setText(appointment.getPatientId());
 
         doctorIDTextField.setText(appointment.getStaffId());
 
-        //patientNameTextField.setText(appointment);
-        //doctorNameTextField.setText();
+        patientNameTextField.setText(patientName);
+
+        doctorNameTextField.setText(staffName);
+
         appointmentDate.setText(String.valueOf(appointment.getTime().getDayOfMonth()));
 
-        appointmentMonth.setSelectedItem(String.valueOf(appointment.getTime().getMonth()));
+        appointmentMonth.setSelectedItem(String.valueOf(appointment.getTime().getMonthValue()));
 
         appointmentYear.setText(String.valueOf(appointment.getTime().getYear()));
     }
 
     public void clearText() {   // xóa hết giá trị của textField
         appointmentIDTextField.setText("");
+        clearTextWithoutId();
+    }
 
+    public void clearTextWithoutId(){
         patientIDTextField.setText("");
-
         patientNameTextField.setText("");
-
         doctorIDTextField.setText("");
-
         doctorNameTextField.setText("");
-
         appointmentDate.setText("");
-
         appointmentMonth.setSelectedItem("1");
-
         appointmentYear.setText("");
+    }
 
+    public boolean hasTextFieldEmpty() {
+        return appointmentDate.getText().trim().isEmpty()
+                || appointmentYear.getText().trim().isEmpty()
+                || patientIDTextField.getText().trim().isEmpty()
+                || doctorIDTextField.getText().trim().isEmpty();
     }
 
     public void disableSupportButton() {    // disable các nút hoàn tác, hủy, lưu, chon
@@ -144,6 +206,18 @@ public class AppointmentManagement extends javax.swing.JPanel {
         createAppointmentButton.setEnabled(true);
         updateAppointmentButton.setEnabled(true);
         deleteButton.setEnabled(true);
+    }
+
+    public Appointment getAppointmentFromTextField() {
+        String appointmentId = appointmentIDTextField.getText().trim();
+        String patientId = patientIDTextField.getText().trim();
+        String doctorId = doctorIDTextField.getText().trim();
+        LocalDateTime time = LocalDateTime.of(Integer.parseInt(appointmentYear.getText().trim()),
+                Integer.parseInt((String) Objects.requireNonNull(appointmentMonth.getSelectedItem())),
+                Integer.parseInt(appointmentDate.getText().trim()),
+                0, 0);
+
+        return new Appointment(appointmentId, patientId, doctorId, time);
     }
 
     public void setComboBoxCustomDisabled(JComboBox<?> comboBox, boolean disabled) {
@@ -204,14 +278,7 @@ public class AppointmentManagement extends javax.swing.JPanel {
         }
     }
 
-    public Appointment getRecordFromTextField() {
-        String appointmentId = appointmentIDTextField.getText().trim();
-        String patientId = patientIDTextField.getText().trim();
-        String doctorId = doctorIDTextField.getText().trim();
-        LocalDateTime time = null;
 
-        return new Appointment(appointmentId, patientId, doctorId, time);
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -224,7 +291,7 @@ public class AppointmentManagement extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        appointmentsTable = new javax.swing.JTable();
+        appointmentsTable = new Table();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -284,7 +351,6 @@ public class AppointmentManagement extends javax.swing.JPanel {
         jLabel3.setText("Thời gian:");
 
         doctorIDTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        doctorIDTextField.setEnabled(false);
         doctorIDTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 doctorIDTextFieldActionPerformed(evt);
@@ -292,7 +358,6 @@ public class AppointmentManagement extends javax.swing.JPanel {
         });
 
         patientIDTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        patientIDTextField.setEnabled(false);
         patientIDTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 patientIDTextFieldActionPerformed(evt);
@@ -314,7 +379,6 @@ public class AppointmentManagement extends javax.swing.JPanel {
         jLabel4.setText("ID lịch hẹn:");
 
         appointmentIDTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        appointmentIDTextField.setEnabled(false);
         appointmentIDTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 appointmentIDTextFieldActionPerformed(evt);
@@ -424,12 +488,22 @@ public class AppointmentManagement extends javax.swing.JPanel {
         choosePatientButton.setText("Chọn");
         choosePatientButton.setFocusPainted(false);
         choosePatientButton.setFocusable(false);
+        choosePatientButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                choosePatientButtonActionPerformed(evt);
+            }
+        });
 
         chooseDoctorbutton.setBackground(new java.awt.Color(204, 204, 204));
         chooseDoctorbutton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         chooseDoctorbutton.setText("Chọn");
         chooseDoctorbutton.setFocusPainted(false);
         chooseDoctorbutton.setFocusable(false);
+        chooseDoctorbutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chooseDoctorButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -580,38 +654,115 @@ public class AppointmentManagement extends javax.swing.JPanel {
     }//GEN-LAST:event_doctorNameTextFieldActionPerformed
 
     private void createAppointmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createAppointmentButtonActionPerformed
-        // TODO add your handling code here:
+        if (currentAction != AdminAction.ADD) clearText();
+        currentAction = AdminAction.ADD;
         disableRemainMainButton(createAppointmentButton);
         enableSupportButton();
+
+        appointmentIDTextField.setText(Utils.genUUID().toString());
         enableEditingText();
     }//GEN-LAST:event_createAppointmentButtonActionPerformed
 
     private void updateAppointmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateAppointmentButtonActionPerformed
-        // TODO add your handling code here:
+        currentAction = AdminAction.UPDATE;
         disableRemainMainButton(updateAppointmentButton);
         enableSupportButton();
-        enableEditingText();
-    }//GEN-LAST:event_updateAppointmentButtonActionPerformed
+        enableEditingTextWithOutId();
+    }
 
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
-        // TODO add your handling code here:
-        clearText();
-    }//GEN-LAST:event_undoButtonActionPerformed
+        if (selectedAppointment != null) {
+            setText(selectedAppointment, selectedPatientName, selectedStaffName);
+        } else {
+            if(currentAction == AdminAction.ADD){
+                clearTextWithoutId();
+            } else {
+                clearText();
+            }
+
+        }
+    }
+
+    private void choosePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
+        DialogPatientChooser dialogPatientChooser = new DialogPatientChooser(MainView.getFrames()[0], true);
+        dialogPatientChooser.showTable("Hãy chọn bệnh nhân!");
+        if(dialogPatientChooser.isOk()){
+            patientIDTextField.setText(dialogPatientChooser.getSelectedPatientId());
+            patientNameTextField.setText(dialogPatientChooser.getSelectedPatientFullName());
+        }
+    }
+    private void chooseDoctorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
+        DialogStaffIsDoctorChooser dialogStaffIsDoctorChooser = new DialogStaffIsDoctorChooser(MainView.getFrames()[0], true);
+        dialogStaffIsDoctorChooser.showTable("Hãy chọn nhân viên!");
+        if(dialogStaffIsDoctorChooser.isOk()){
+            doctorIDTextField.setText(dialogStaffIsDoctorChooser.getSelectedStaffId());
+            doctorNameTextField.setText(dialogStaffIsDoctorChooser.getSelectedStaffFullName());
+        }
+    }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
+        enableMainButton();
         disableSupportButton();
         enableMainButton();
-    }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
-        disableSupportButton();
-        enableMainButton();
-    }//GEN-LAST:event_saveButtonActionPerformed
+        if (selectedAppointment != null) {
+            setText(selectedAppointment, selectedPatientName, selectedStaffName);
+        } else {
+            clearText();
+        }
+
+        currentAction = null;
+    }
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        boolean rs = false;
+        if (!hasTextFieldEmpty()) {
+            switch (currentAction) {
+                case ADD -> {
+                    rs = AppointmentController.addAppointment(getAppointmentFromTextField(),appointmentsTable);
+                    AppointmentController.addRowAppointmentTable(defaultTableModelMain);
+                }
+                case UPDATE -> {
+                    rs = AppointmentController.updateAppointment(indexSelectedAppointment, getAppointmentFromTextField(), appointmentsTable);
+                }
+            }
+            enableMainButton();
+            disableSupportButton();
+            disableEditingText();
+            MessageResultAdminAction messageResultAdminAction = new MessageResultAdminAction(MainView.getFrames()[0], true);
+            if (rs) {
+                messageResultAdminAction.showMessageSuccess(currentAction);
+            } else {
+                messageResultAdminAction.showMessageFail(currentAction);
+            }
+            currentAction = null;
+        } else {
+            Message ms = new Message(MainView.getFrames()[0], true);
+            ms.showMessage("Hãy nhập đầy đủ thông tin", false);
+        }
+    }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // TODO add your handling code here:
+        currentAction = AdminAction.DELETE;
+        Message obj = new Message(MainView.getFrames()[0], true);
+        String ms = "";
+        boolean withAction;
+        if (selectedAppointment == null) {
+            ms = "Không có đối tượng để xóa";
+            withAction = false;
+        } else {
+            ms = "Bạn có chắc chắn muốn xóa không?";
+            withAction = true;
+        }
+        obj.showMessage(ms, withAction);
+        if (obj.isOk()) {
+            AppointmentController.deleteAppointment(indexSelectedAppointment, selectedAppointment, appointmentsTable);
+            AppointmentController.addRowAppointmentTable(defaultTableModelMain);
+            indexSelectedAppointment = -1;
+            selectedAppointment = null;
+        }
+
+        currentAction = null;
     }//GEN-LAST:event_deleteButtonActionPerformed
 
 
@@ -620,7 +771,7 @@ public class AppointmentManagement extends javax.swing.JPanel {
     private javax.swing.JTextField appointmentIDTextField;
     private javax.swing.JComboBox<String> appointmentMonth;
     private javax.swing.JTextField appointmentYear;
-    private javax.swing.JTable appointmentsTable;
+    private Table appointmentsTable;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton chooseDoctorbutton;
     private javax.swing.JButton choosePatientButton;

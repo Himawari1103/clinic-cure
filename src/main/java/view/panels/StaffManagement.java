@@ -4,10 +4,15 @@
  */
 package view.panels;
 
+import constants.AdminAction;
 import constants.StaffRole;
 import constants.StaffSpeciality;
+
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Objects;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -19,28 +24,42 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
+import controller.main.PatientController;
+import controller.main.StaffController;
 import model.base.Staff;
 import util.Utils;
 import view.components.main.components.scrollbar.ScrollBarCustom;
 import view.components.main.dialog.Message;
+import view.components.main.dialog.MessageResultAdminAction;
 import view.frames.MainView;
 import view.components.main.components.table.Table;
 
 /**
- *
  * @author Chi Cute
  */
 public class StaffManagement extends javax.swing.JPanel {
 
     Staff selectedStaff = null;
     int indexSelectedStaff = -1;
+    AdminAction currentAction = null;
+
+    DefaultTableModel defaultTableModelMain;
 
     public StaffManagement() {
         initComponents();
+        init();
         disableEditingText();
         disableSupportButton();
+
+        initTable();
+        defaultTableModelMain = (DefaultTableModel) staffTable.getModel();
+        staffTable.fixTable(jScrollPane1);
     }
 
     public void enableEditingText() {   // bật edit tất cả các textField
@@ -52,12 +71,15 @@ public class StaffManagement extends javax.swing.JPanel {
         staffFullNameTextField.setEnabled(true);
 
         setComboBoxCustomDisabled(roleComboBox, false);
+        roleComboBox.setBackground(Color.WHITE);
 
         staffNumberTextField.setEnabled(true);
 
         emailTextField.setEnabled(true);
 
         setComboBoxCustomDisabled(specialityComboBox, false);
+        specialityComboBox.setBackground(Color.WHITE);
+
 
     }
 
@@ -89,42 +111,51 @@ public class StaffManagement extends javax.swing.JPanel {
 
         emailTextField.setText(staff.getEmail());
 
-        roleComboBox.setSelectedItem(staff.getRole());
+        roleComboBox.setSelectedItem(staff.getRole().getDetail());
+        roleComboBox.repaint();
+        specialityComboBox.setSelectedItem(selectedStaff.getSpeciality().getDetail());
+        specialityComboBox.repaint();
+//        if (roleComboBox.getSelectedItem().equals(StaffRole.DOCTOR)) {
+//            if (selectedStaff.getSpeciality().equals(StaffSpeciality.CARDIOLOGY)) {
+//
+//                specialityComboBox.setSelectedIndex(1);
+//            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.DERMATOLOGY)) {
+//                specialityComboBox.setSelectedIndex(3);
+//            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.ENDOCRINOLOGY)) {
+//                specialityComboBox.setSelectedIndex(6);
+//            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.HEMATOLOGY)) {
+//                specialityComboBox.setSelectedIndex(7);
+//            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.NEUROLOGY)) {
+//                specialityComboBox.setSelectedIndex(2);
+//            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.OPHTHALMOLOGY)) {
+//                specialityComboBox.setSelectedIndex(4);
+//            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.OTOLARYNGOLOGY)) {
+//                specialityComboBox.setSelectedIndex(5);
+//            }
+//        } else {
+//            specialityComboBox.setSelectedIndex(0);
+//        }
 
-        if (roleComboBox.getSelectedItem().equals(StaffRole.DOCTOR)) {
-            if (selectedStaff.getSpeciality().equals(StaffSpeciality.CARDIOLOGY)) {
-                specialityComboBox.setSelectedIndex(1);
-            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.DERMATOLOGY)) {
-                specialityComboBox.setSelectedIndex(3);
-            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.ENDOCRINOLOGY)) {
-                specialityComboBox.setSelectedIndex(6);
-            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.HEMATOLOGY)) {
-                specialityComboBox.setSelectedIndex(7);
-            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.NEUROLOGY)) {
-                specialityComboBox.setSelectedIndex(2);
-            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.OPHTHALMOLOGY)) {
-                specialityComboBox.setSelectedIndex(4);
-            } else if (selectedStaff.getSpeciality().equals(StaffSpeciality.OTOLARYNGOLOGY)) {
-                specialityComboBox.setSelectedIndex(5);
-            }
-        } else {
-            specialityComboBox.setSelectedIndex(0);
-        }
     }
 
     public void clearText() {   // xóa hết giá trị của textField
         staffIDTextField.setText("");
+        clearTextWithoutId();
+    }
 
+    public void clearTextWithoutId() {   // xóa hết giá trị của textField
         staffFullNameTextField.setText("");
-
         roleComboBox.setSelectedIndex(0);
-
         staffNumberTextField.setText("");
-
         emailTextField.setText("");
-
         specialityComboBox.setSelectedIndex(0);
+    }
 
+    public boolean hasTextFieldEmpty() {
+        return staffIDTextField.getText().trim().isEmpty()
+                || staffFullNameTextField.getText().trim().isEmpty()
+                || staffNumberTextField.getText().trim().isEmpty()
+                || emailTextField.getText().trim().isEmpty();
     }
 
     public void disableSupportButton() {    // disable các nút hoàn tác, hủy, lưu
@@ -156,6 +187,17 @@ public class StaffManagement extends javax.swing.JPanel {
         addButton.setEnabled(true);
         updateButton.setEnabled(true);
         deleteButton.setEnabled(true);
+    }
+
+    public Staff getStaffFromTextField() {
+        String staffId = staffIDTextField.getText().trim();
+        String fullName = staffFullNameTextField.getText().trim();
+        StaffRole role = StaffRole.getStaffRoleFromDetail(Objects.requireNonNull(roleComboBox.getSelectedItem()).toString());
+        StaffSpeciality speciality = StaffSpeciality.getStaffSpecialityFromDetail(Objects.requireNonNull(specialityComboBox.getSelectedItem()).toString());
+        String email = emailTextField.getText().trim();
+        String phoneNumber = staffNumberTextField.getText().trim();
+
+        return new Staff(staffId, fullName, phoneNumber, email, role, speciality);
     }
 
     public void setComboBoxCustomDisabled(JComboBox<?> comboBox, boolean disabled) {
@@ -230,20 +272,12 @@ public class StaffManagement extends javax.swing.JPanel {
                     if (indexSelectedStaff != -1) {
                         String staffId = (String) staffTable.getValueAt(indexSelectedStaff, 0);
                         String fullName = (String) staffTable.getValueAt(indexSelectedStaff, 1);
-                        StaffRole role = StaffRole.valueOf((String) staffTable.getValueAt(indexSelectedStaff, 2));
+                        StaffRole role = StaffRole.getStaffRoleFromDetail((String) staffTable.getValueAt(indexSelectedStaff, 2));
                         String phoneNumber = (String) staffTable.getValueAt(indexSelectedStaff, 4);
                         String email = (String) staffTable.getValueAt(indexSelectedStaff, 5);
-//                        String patientId = patientIDTextField.getText().trim();
-//                        String fullName = patientFullNameTextField.getText().trim();
-//                        LocalDate dateOfBirth = LocalDate.of(Integer.parseInt(year.getText().trim()), Integer.parseInt(Objects.requireNonNull(month.getSelectedItem()).toString()), Integer.parseInt(date.getText().trim()));
-//                        String address = patientAddressTextField.getText().trim();
-//                        Gender gender = Gender.valueOf(Objects.requireNonNull(patientGenderComboBox.getSelectedItem()).toString());
-//                        String nation = patientNationTextField.getText().trim();
-//                        String occupation = patientOccupationTextField.getText().trim();
-//                        String phoneNumber = patientPhoneNumberTextField.getText().trim();
 
                         if (role.equals(StaffRole.DOCTOR)) {
-                            StaffSpeciality speciality = StaffSpeciality.valueOf((String) staffTable.getValueAt(indexSelectedStaff, 3));
+                            StaffSpeciality speciality = StaffSpeciality.getStaffSpecialityFromDetail((String) staffTable.getValueAt(indexSelectedStaff, 3));
                             selectedStaff = new Staff(staffId, fullName, phoneNumber, email, role, speciality);
                         } else {
                             selectedStaff = new Staff(staffId, fullName, phoneNumber, email, role);
@@ -257,24 +291,158 @@ public class StaffManagement extends javax.swing.JPanel {
     }
 
     public void addDataTable() {
+        StaffController.addRowStaffTable(staffTable);
     }
 
-    public Staff getStaffFromTextField() {
-        String staffId = staffIDTextField.getText().trim();
-        String fullName = staffFullNameTextField.getText().trim();
-        StaffRole role = StaffRole.valueOf(Objects.requireNonNull(roleComboBox.getSelectedItem()).toString());
-        StaffSpeciality speciality = StaffSpeciality.valueOf(Objects.requireNonNull(specialityComboBox.getSelectedItem()).toString());
-        String email = emailTextField.getText().trim();
-        String phoneNumber = staffNumberTextField.getText().trim();
-        
-        return new Staff(staffId, fullName, phoneNumber, email, role, speciality);
+    ArrayList<Object[]> listRemovedRows = new ArrayList<>();
+
+    public void searchByStaffIdInsert() {
+        String subPatientId = searchStaffIDTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) staffTable.getModel();
+        for (int i = 0; i < defaultTableModel.getRowCount(); i++) {
+            if (!((String) defaultTableModel.getValueAt(i, 0)).contains(subPatientId)) {
+                listRemovedRows.add(staffTable.getRow(i));
+                staffTable.deleteRow(i);
+                i--;
+            }
+        }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    public void searchByStaffIdRemove() {
+        String subPatientId = searchStaffIDTextField.getText().trim();
+        String subPatientName = searchStaffNameTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) staffTable.getModel();
+        if (!listRemovedRows.isEmpty()) {
+            for (int i = 0; i < listRemovedRows.size(); i++) {
+                if (((String) listRemovedRows.get(i)[0]).contains(subPatientId)
+                        && ((String) listRemovedRows.get(i)[1]).contains(subPatientName)) {
+                    defaultTableModel.addRow(listRemovedRows.remove(i));
+                    i--;
+                }
+            }
+        }
+    }
+
+    public void searchByNameInsert() {
+        String subPatientId = searchStaffNameTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) staffTable.getModel();
+        for (int i = 0; i < defaultTableModel.getRowCount(); i++) {
+            if (!((String) defaultTableModel.getValueAt(i, 1)).contains(subPatientId)) {
+                listRemovedRows.add(staffTable.getRow(i));
+                staffTable.deleteRow(i);
+                i--;
+            }
+        }
+    }
+
+    public void searchByNameRemove() {
+        String subPatientId = searchStaffIDTextField.getText().trim();
+        String subPatientName = searchStaffNameTextField.getText().trim();
+        DefaultTableModel defaultTableModel = (DefaultTableModel) staffTable.getModel();
+        if (!listRemovedRows.isEmpty()) {
+            for (int i = 0; i < listRemovedRows.size(); i++) {
+                if (((String) listRemovedRows.get(i)[0]).contains(subPatientId)
+                        && ((String) listRemovedRows.get(i)[1]).contains(subPatientName)) {
+                    defaultTableModel.addRow(listRemovedRows.remove(i));
+                    i--;
+                }
+            }
+        }
+    }
+
+    public void filter() {
+        System.out.println("debug!out " + searchSpecialityComboBox.getSelectedIndex());
+        String subStaffId = searchStaffIDTextField.getText().trim();
+        String subStaffName = searchStaffNameTextField.getText().trim();
+        String roleString;
+        if (searchStaffComboBox.getSelectedIndex() == 0) {
+            roleString = "";
+        } else {
+            roleString = (String) searchStaffComboBox.getSelectedItem();
+        }
+        String specialityString;
+        if (searchSpecialityComboBox.getSelectedIndex() == 0) {
+            specialityString = "";
+        } else {
+            specialityString = (String) searchSpecialityComboBox.getSelectedItem();
+        }
+
+        String[] columnNames = new String[defaultTableModelMain.getColumnCount()];
+        for (int j = 0; j < defaultTableModelMain.getColumnCount(); j++) {
+            columnNames[j] = defaultTableModelMain.getColumnName(j);
+        }
+        DefaultTableModel defaultTableModel = new DefaultTableModel(columnNames,0);
+        for (int i = 0; i < defaultTableModelMain.getRowCount(); i++) {
+            if (((String) defaultTableModelMain.getValueAt(i, 0)).contains(subStaffId)
+                    && ((String) defaultTableModelMain.getValueAt(i, 1)).contains(subStaffName)
+                    && ((String) defaultTableModelMain.getValueAt(i, 2)).contains(roleString)
+                    && ((String) defaultTableModelMain.getValueAt(i, 3)).contains(specialityString)) {
+
+                String[] row = new String[defaultTableModelMain.getColumnCount()];
+                for (int j = 0; j < defaultTableModelMain.getColumnCount(); j++) {
+                    row[j] = (String) defaultTableModelMain.getValueAt(i, j);
+                }
+                defaultTableModel.addRow(row);
+            }
+        }
+        System.out.println(defaultTableModel.getColumnCount() + "---" + defaultTableModel.getRowCount());
+        staffTable.setModel(defaultTableModel);
+        staffTable.repaint();
+    }
+
+    private void init(){
+        searchStaffIDTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchByStaffIdInsert();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchByStaffIdRemove();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        searchStaffNameTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchByNameInsert();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchByNameRemove();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        searchStaffComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+//                if (e.getStateChange() == ItemEvent.SELECTED) {
+//                    String selectedItem = (String) e.getItem();
+//                    System.out.println("Selected: " + selectedItem);
+//                }
+                filter();
+            }
+        });
+        searchSpecialityComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+//                if (e.getStateChange() == ItemEvent.SELECTED) {
+//                    String selectedItem = (String) e.getItem();
+//                    System.out.println("Selected: " + selectedItem);
+//                }
+                filter();
+            }
+        });
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -300,7 +468,7 @@ public class StaffManagement extends javax.swing.JPanel {
         emailTextField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        staffTable = new javax.swing.JTable();
+        staffTable = new Table();
         searchButton = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         searchStaffIDTextField = new javax.swing.JTextField();
@@ -321,7 +489,6 @@ public class StaffManagement extends javax.swing.JPanel {
         jLabel1.setText("ID:");
 
         staffIDTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        staffIDTextField.setEnabled(false);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Họ tên:");
@@ -336,7 +503,7 @@ public class StaffManagement extends javax.swing.JPanel {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Vị trí:");
 
-        roleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Bác sĩ" }));
+        roleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"--Chọn--", "Bác sĩ"}));
         roleComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 roleComboBoxActionPerformed(evt);
@@ -392,7 +559,7 @@ public class StaffManagement extends javax.swing.JPanel {
             }
         });
 
-        specialityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Tim Mạch - Cardiology", "Thần Kinh - Neurology", "Da liễu - Dermatology", "Nhãn khoa - Ophtalmology", "Tai Mũi Họng - Otolaryngology (ENT)", "Nội tiết - Endocrinology", "Huyết học - Hematology", " " }));
+        specialityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Không có", "Tim mạch", "Thần kinh", "Da liễu", "Nhãn khoa", "Tai mũi họng", "Nội tiết", "Huyết học"}));
 
         saveButton.setBackground(new java.awt.Color(153, 255, 51));
         saveButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -425,103 +592,103 @@ public class StaffManagement extends javax.swing.JPanel {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(roleComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(staffNumberTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(staffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(staffFullNameTextField))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(roleComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(staffNumberTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(staffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(specialityComboBox, 0, 225, Short.MAX_VALUE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(emailTextField)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(19, 19, 19))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(staffFullNameTextField))
+                                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(specialityComboBox, 0, 225, Short.MAX_VALUE)))
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(emailTextField)))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(19, 19, 19))
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(staffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addComponent(staffFullNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(roleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(specialityComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(staffNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)
-                            .addComponent(emailTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(14, 14, 14))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(staffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel2)
+                                                        .addComponent(staffFullNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel4)
+                                                        .addComponent(roleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel5)
+                                                        .addComponent(specialityComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(12, 12, 12)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel7)
+                                                        .addComponent(staffNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel3)
+                                                        .addComponent(emailTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(14, 14, 14))
         );
 
         jPanel2.setBackground(new java.awt.Color(229, 245, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh sách nhân viên", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         staffTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][]{
 
-            },
-            new String [] {
-                "ID", "Họ tên", "Vị trí", "Chuyên khoa", "Điện thoại", "Email"
-            }
+                },
+                new String[]{
+                        "ID", "Họ tên", "Vị trí", "Chuyên khoa", "Điện thoại", "Email"
+                }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+            boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         staffTable.setFocusable(false);
@@ -554,9 +721,9 @@ public class StaffManagement extends javax.swing.JPanel {
 
         jLabel14.setText("Chuyên khoa:");
 
-        searchStaffComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Bác sĩ" }));
+        searchStaffComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"--Chọn--", "Bác sĩ"}));
 
-        searchSpecialityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Chọn--", "Tim Mạch - Cardiology", "Thần Kinh - Neurology", "Da liễu - Dermatology", "Nhãn khoa - Ophtalmology", "Tai Mũi Họng - Otolaryngology (ENT)", "Nội tiết - Endocrinology", "Huyết học - Hematology", " " }));
+        searchSpecialityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"--Chọn--", "Không có", "Tim mạch", "Thần kinh", "Da liễu", "Nhãn khoa", "Tai mũi họng", "Nội tiết", "Huyết học"}));
 
         clearButton.setBackground(new java.awt.Color(102, 255, 255));
         clearButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -570,61 +737,61 @@ public class StaffManagement extends javax.swing.JPanel {
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchStaffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchStaffNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchStaffComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchSpecialityComboBox, 0, 1, Short.MAX_VALUE)
-                .addGap(12, 12, 12)
-                .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchButton)
-                .addContainerGap())
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchStaffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchStaffNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchStaffComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchSpecialityComboBox, 0, 1, Short.MAX_VALUE)
+                                .addGap(12, 12, 12)
+                                .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchButton)
+                                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(searchStaffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12)
-                    .addComponent(searchStaffNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)
-                    .addComponent(searchStaffComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchSpecialityComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel11)
+                                        .addComponent(searchStaffIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel12)
+                                        .addComponent(searchStaffNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel13)
+                                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel14)
+                                        .addComponent(searchStaffComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(searchSpecialityComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -641,44 +808,100 @@ public class StaffManagement extends javax.swing.JPanel {
     }//GEN-LAST:event_staffNumberTextFieldActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        // TODO add your handling code here:
+        if (currentAction != AdminAction.ADD) clearText();
+        currentAction = AdminAction.ADD;
         disableRemainMainButton(addButton);
         enableSupportButton();
+
+        staffIDTextField.setText(Utils.genUUID().toString());
+
         enableEditingText();
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // TODO add your handling code here:
-//        Message obj = new Message(MainView.getFrames()[0], true);
-//        String ms = "";
-//        boolean withAction;
-//        if (selectedStaff == null) {
-//            ms = "Không có đối tượng để xóa";
-//            withAction = false;
-//        } else {
-//            ms = "Bạn có chắc chắn muốn xóa" + selectedStaff.getFullName() + " không?";
-//            withAction = true;
-//        }
-//        obj.showMessage(ms, withAction);
-//        if (obj.isOk()) {
-//            staffTable.deleteRow(indexSelectedStaff);
-//            indexSelectedStaff = -1;
-//            selectedStaff = null;
-//        }
-    }//GEN-LAST:event_deleteButtonActionPerformed
+        currentAction = AdminAction.DELETE;
+        Message obj = new Message(MainView.getFrames()[0], true);
+        String ms = "";
+        boolean withAction;
+        if (selectedStaff == null) {
+            ms = "Không có đối tượng để xóa";
+            withAction = false;
+        } else {
+            ms = "Bạn có chắc chắn muốn xóa" + selectedStaff.getFullName() + " không?";
+            withAction = true;
+        }
+        obj.showMessage(ms, withAction);
+        if (obj.isOk()) {
+            StaffController.deleteStaff(indexSelectedStaff,selectedStaff,staffTable);
+            StaffController.addRowStaffTable(defaultTableModelMain);
+            indexSelectedStaff = -1;
+            selectedStaff = null;
+        }
+
+        currentAction = null;
+    }
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-        // TODO add your handling code here:
+        currentAction = AdminAction.UPDATE;
         disableRemainMainButton(updateButton);
         enableSupportButton();
         enableEditingText();
-    }//GEN-LAST:event_updateButtonActionPerformed
+    }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
         disableSupportButton();
         enableMainButton();
-    }//GEN-LAST:event_cancelButtonActionPerformed
+        disableEditingText();
+
+        if (selectedStaff != null) {
+            setText(selectedStaff);
+        } else {
+            clearText();
+        }
+
+        currentAction = null;
+    }
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        boolean rs = false;
+        if (!hasTextFieldEmpty()) {
+            switch (currentAction) {
+                case ADD -> {
+                    rs = StaffController.addStaff(getStaffFromTextField(), staffTable);
+                    StaffController.addRowStaffTable(defaultTableModelMain);
+                }
+                case UPDATE -> {
+                    rs = StaffController.updateStaff(indexSelectedStaff, getStaffFromTextField(), staffTable);
+                }
+            }
+            enableMainButton();
+            disableSupportButton();
+            disableEditingText();
+            MessageResultAdminAction messageResultAdminAction = new MessageResultAdminAction(MainView.getFrames()[0], true);
+            if (rs) {
+                messageResultAdminAction.showMessageSuccess(currentAction);
+            } else {
+                messageResultAdminAction.showMessageFail(currentAction);
+            }
+            currentAction = null;
+        } else {
+            Message ms = new Message(MainView.getFrames()[0], true);
+            ms.showMessage("Hãy nhập đầy đủ thông tin", false);
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
+        if (selectedStaff != null) {
+            setText(selectedStaff);
+        } else {
+            if(currentAction == AdminAction.ADD){
+                clearTextWithoutId();
+            } else {
+                clearText();
+            }
+
+        }
+    }
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
@@ -691,17 +914,6 @@ public class StaffManagement extends javax.swing.JPanel {
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_clearButtonActionPerformed
-
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
-        disableSupportButton();
-        enableMainButton();
-    }//GEN-LAST:event_saveButtonActionPerformed
-
-    private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
-        // TODO add your handling code here:
-        clearText();
-    }//GEN-LAST:event_undoButtonActionPerformed
 
     private void emailTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailTextFieldActionPerformed
         // TODO add your handling code here:
@@ -738,7 +950,7 @@ public class StaffManagement extends javax.swing.JPanel {
     private javax.swing.JTextField staffFullNameTextField;
     private javax.swing.JTextField staffIDTextField;
     private javax.swing.JTextField staffNumberTextField;
-    private javax.swing.JTable staffTable;
+    private Table staffTable;
     private javax.swing.JButton undoButton;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables

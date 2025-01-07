@@ -55,6 +55,26 @@ public class Utils {
         return LocalDate.parse(str,dtfDate);
     }
 
+    public static String localDateTimeToString(LocalDateTime lcDateTime){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm:ss");
+        return lcDateTime.format(dtfDate);
+    }
+
+    public static LocalDateTime stringToLocalDateTime(String str){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm:ss");
+        return LocalDateTime.parse(str,dtfDate);
+    }
+
+    public static String localDateTimeToStringWithTime(LocalDateTime lcDateTime){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+        return lcDateTime.format(dtfDate);
+    }
+
+    public static LocalDateTime stringToLocalDateTimeWithTime(String str){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+        return LocalDateTime.parse(str,dtfDate);
+    }
+
     public static UUID genUUID(){
         return UUID.randomUUID();
     }

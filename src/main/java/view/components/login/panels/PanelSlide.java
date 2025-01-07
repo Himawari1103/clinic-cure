@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
+import java.time.LocalDateTime;
 import javax.swing.JFrame;
 
 import constants.AccountType;
@@ -99,7 +100,7 @@ public class PanelSlide extends javax.swing.JLayeredPane {
         login.addEventByPass(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AccountModel.create(new Account("ADMIN","ADMIN","ADMIN", AccountType.ADMIN));
+                AccountModel.create(new Account("ADMIN","ADMIN","ADMIN","ADMIN", AccountType.ADMIN, LocalDateTime.now()));
                 MainView main = new MainView();
                 fram.dispose();
             }

@@ -1,6 +1,10 @@
 package model.base;
 
+import util.Utils;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Receipt {
     private String receiptId;
@@ -65,5 +69,9 @@ public class Receipt {
                 ", amount=" + amount +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+    public String[] toStrings(){
+        return new String[]{receiptId, recordId, String.valueOf(amount), Utils.localDateTimeToStringWithTime(createdAt)};
     }
 }

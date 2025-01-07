@@ -7,6 +7,7 @@ import model.db_connection.DBConnection;
 
 import javax.swing.*;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -108,9 +109,11 @@ public class AccountDao implements Dao<Account> {
                 String accountId = rs.getString("accountId");
                 String username = rs.getString("username");
                 String password = rs.getString("password");
+                String email = rs.getString("email");
                 String accType = rs.getString("accountType");
+                LocalDateTime createdAt = Utils.sqlTimestampToLocalDateTime(rs.getTimestamp("createdAt"));
                 Icon avatar = rs.getBytes("avatar") == null ? new ImageIcon(getClass().getResource("/icon_login/user.png")) : new ImageIcon(rs.getBytes("avatar"));
-                acc = new Account(accountId, username, password, AccountType.valueOf(accType), avatar);
+                acc = new Account(accountId, username, password, email, AccountType.valueOf(accType), createdAt, avatar);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -134,9 +137,11 @@ public class AccountDao implements Dao<Account> {
                 String accountId = rs.getString("accountId");
                 String username = rs.getString("username");
                 String password = rs.getString("password");
+                String email = rs.getString("email");
                 String accType = rs.getString("accountType");
+                LocalDateTime createdAt = Utils.sqlTimestampToLocalDateTime(rs.getTimestamp("createdAt"));
                 Icon avatar = rs.getBytes("avatar") == null ? new ImageIcon(getClass().getResource("/icon_login/user.png")) : new ImageIcon(rs.getBytes("avatar"));
-                account = new Account(accountId, username, password, AccountType.valueOf(accType), avatar);
+                account = new Account(accountId, username, password, email, AccountType.valueOf(accType), createdAt, avatar);
                 accounts.add(account);
             }
         } catch (SQLException e) {
@@ -165,10 +170,12 @@ public class AccountDao implements Dao<Account> {
                 String accountId = rs.getString("accountId");
 //                String username = rs.getString("username");
 //                String password = rs.getString("password");
+                String email = rs.getString("email");
                 String accType = rs.getString("accountType");
+                LocalDateTime createdAt = Utils.sqlTimestampToLocalDateTime(rs.getTimestamp("createdAt"));
                 Icon avatar = rs.getBytes("avatar") == null ? new ImageIcon(getClass().getResource("/icon_login/user.png")) : new ImageIcon(rs.getBytes("avatar"));
                 if (Objects.equals(rs.getString("password"), password)) {
-                    acc = new Account(accountId, username, password, AccountType.valueOf(accType), avatar);
+                    acc = new Account(accountId, username, password, email, AccountType.valueOf(accType), createdAt, avatar);
                 } else {
                     acc = new Account();
                 }

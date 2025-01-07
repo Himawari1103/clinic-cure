@@ -4,6 +4,11 @@
  */
 package view.panels;
 
+import controller.main.ReportController;
+import view.components.main.components.table.Table;
+
+import java.time.LocalDate;
+
 /**
  *
  * @author Chi Cute
@@ -15,6 +20,15 @@ public class PatientsList extends javax.swing.JPanel {
      */
     public PatientsList() {
         initComponents();
+        patientTable.fixTable(jScrollPane1);
+    }
+
+    public void addData(LocalDate start, LocalDate end){
+        ReportController.addDataPatientList(this.patientTable,start,end);
+    }
+
+    public void addData(){
+        ReportController.addDataPatientList(this.patientTable);
     }
 
     /**
@@ -27,7 +41,7 @@ public class PatientsList extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        patientTable = new javax.swing.JTable();
+        patientTable = new Table();
 
         patientTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -63,6 +77,15 @@ public class PatientsList extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable patientTable;
+    private Table patientTable;
     // End of variables declaration//GEN-END:variables
+
+
+    public Table getPatientTable() {
+        return patientTable;
+    }
+
+    public void setPatientTable(Table patientTable) {
+        this.patientTable = patientTable;
+    }
 }

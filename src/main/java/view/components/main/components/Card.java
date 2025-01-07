@@ -36,7 +36,16 @@ public class Card extends javax.swing.JPanel {
         lbValues.setText(df.format(data.getValues()));
         lbIcon.setIcon(data.getIcon());
         pro.setValue(data.getPercentage());
-        lbPer.setText(df.format(data.getPercentage()) + "%");
+//        lbPer.setText(df.format(data.getPercentage()) + "%");
+    }
+
+    public void setValueDouble(double value) {
+        DecimalFormat df = new DecimalFormat("#,##0.##");
+        lbValues.setText(df.format(value));
+    }
+
+    public void setValueInt(int value) {
+        lbValues.setText(String.valueOf(value));
     }
 
     @SuppressWarnings("unchecked")
@@ -47,7 +56,7 @@ public class Card extends javax.swing.JPanel {
         lbValues = new javax.swing.JLabel();
         lbIcon = new javax.swing.JLabel();
         pro = new ProgressBarCustom();
-        lbPer = new javax.swing.JLabel();
+//        lbPer = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -61,8 +70,8 @@ public class Card extends javax.swing.JPanel {
 
         lbIcon.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
-        lbPer.setForeground(new Color(255, 255, 255));
-        lbPer.setText("0%");
+//        lbPer.setForeground(new Color(255, 255, 255));
+//        lbPer.setText("0%");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -73,8 +82,9 @@ public class Card extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pro, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbPer))
+//                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+//                        .addComponent(lbPer)
+                    )
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lbTitle)
@@ -94,7 +104,7 @@ public class Card extends javax.swing.JPanel {
                     .addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbPer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+//                    .addComponent(lbPer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(pro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
@@ -113,7 +123,7 @@ public class Card extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lbIcon;
-    private javax.swing.JLabel lbPer;
+//    private javax.swing.JLabel lbPer;
     private javax.swing.JLabel lbTitle;
     private javax.swing.JLabel lbValues;
     private ProgressBarCustom pro;

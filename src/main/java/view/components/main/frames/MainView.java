@@ -52,6 +52,7 @@ public class MainView extends javax.swing.JFrame {
         }
         initComponents();
         init();
+
         setVisible(true);
     }
 
@@ -65,7 +66,7 @@ public class MainView extends javax.swing.JFrame {
             @Override
             public void menuSelected(MenuType menuType, MenuType subMenuType) {
                 switch (menuType) {
-                    case REPORT -> mainPanel.showForm(new ReportAndAccountManagement());
+                    case REPORT -> mainPanel.showForm(new ReportManagement());
                     case PATIENT -> mainPanel.showForm(new PatientsManagement());
                     case STAFF -> mainPanel.showForm(new StaffManagement());
                     case APPOINTMENT -> mainPanel.showForm(new AppointmentManagement());
@@ -130,7 +131,7 @@ public class MainView extends javax.swing.JFrame {
         //  Init google icon font
         IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
         //  Start with this form
-        mainPanel.showForm(new ReportAndAccountManagement());
+        mainPanel.showForm(new ReportManagement());
     }
 
 

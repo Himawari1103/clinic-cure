@@ -91,27 +91,11 @@ public class StaffDao implements Dao<Staff> {
     public int delete(Staff value) {
         Connection c = DBConnection.getConnection();
         int rs = 0;
-        String sql1 = "DELETE FROM receipts WHERE recordId IN (SELECT recordId FROM records WHERE patientId = ?);";
-        String sql2 = "DELETE FROM records WHERE staffId = ?;";
-        String sql3 = "DELETE FROM appointments WHERE staffId = ?;";
-        String sql4 = "DELETE FROM staffs WHERE staffId = ?;";
+        String sql = "DELETE FROM staffs WHERE staffId = ?;";
         try {
-            PreparedStatement stmt = c.prepareStatement(sql1);
+            PreparedStatement stmt = c.prepareStatement(sql);
             stmt.setString(1, value.getStaffId());
             rs = stmt.executeUpdate();
-
-            stmt = c.prepareStatement(sql2);
-            stmt.setString(1, value.getStaffId());
-            rs = stmt.executeUpdate();
-
-            stmt = c.prepareStatement(sql3);
-            stmt.setString(1, value.getStaffId());
-            rs = stmt.executeUpdate();
-
-            stmt = c.prepareStatement(sql4);
-            stmt.setString(1, value.getStaffId());
-            rs = stmt.executeUpdate();
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

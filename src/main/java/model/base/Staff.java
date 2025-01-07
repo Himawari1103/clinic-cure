@@ -3,6 +3,9 @@ package model.base;
 import constants.StaffRole;
 import constants.StaffSpeciality;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Staff {
     private String staffId;
     private String fullName;
@@ -20,6 +23,7 @@ public class Staff {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.role = role;
+        this.speciality = StaffSpeciality.EMPTY;
     }
 
     public Staff(String staffId, String fullName, String phoneNumber, String email, StaffRole role, StaffSpeciality speciality) {
@@ -89,5 +93,10 @@ public class Staff {
                 ", role=" + role +
                 ", speciality=" + (speciality==null?"null":speciality) +
                 '}';
+    }
+
+    public Object[] toObjects(){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return new Object[]{staffId, fullName, role.getDetail(), speciality.getDetail(), phoneNumber, email};
     }
 }

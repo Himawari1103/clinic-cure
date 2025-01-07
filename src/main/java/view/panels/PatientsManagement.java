@@ -8,6 +8,7 @@ import constants.AdminAction;
 import constants.Gender;
 import controller.main.PatientController;
 import model.base.Patient;
+import model.dao.PatientDao;
 import util.Utils;
 import view.components.main.components.scrollbar.ScrollBarCustom;
 import view.components.main.components.table.Table;
@@ -113,12 +114,14 @@ public class PatientsManagement extends javax.swing.JPanel {
         date.setText(String.valueOf(patient.getDateOfBirth().getDayOfMonth()));
 
         month.setSelectedItem(String.valueOf(patient.getDateOfBirth().getMonth()));
+        month.repaint();
 
         year.setText(String.valueOf(patient.getDateOfBirth().getYear()));
 
         patientAddressTextField.setText(patient.getAddress());
 
-        patientGenderComboBox.setSelectedItem(patient.getGender());
+        patientGenderComboBox.setSelectedItem(patient.getGender().getDetail());
+        patientGenderComboBox.repaint();
 
         patientNationTextField.setText(patient.getNation());
 
@@ -280,8 +283,8 @@ public class PatientsManagement extends javax.swing.JPanel {
                         String fullName = (String) patientTable.getValueAt(indexSelectedPatient, 1);
                         LocalDate dateOfBirth = Utils.stringToLocalDate((String) patientTable.getValueAt(indexSelectedPatient, 3));
                         Gender gender = Gender.getGenderFromDetail((String) patientTable.getValueAt(indexSelectedPatient, 4));
-                        String nation = (String) patientTable.getValueAt(indexSelectedPatient, 5);
-                        String phoneNumber = (String) patientTable.getValueAt(indexSelectedPatient, 6);
+                        String phoneNumber = (String) patientTable.getValueAt(indexSelectedPatient, 5);
+                        String nation = (String) patientTable.getValueAt(indexSelectedPatient, 6);
                         String occupation = (String) patientTable.getValueAt(indexSelectedPatient, 7);
                         String address = (String) patientTable.getValueAt(indexSelectedPatient, 8);
 
@@ -944,6 +947,7 @@ public class PatientsManagement extends javax.swing.JPanel {
             switch (currentAction) {
                 case ADD -> {
                     rs = PatientController.addPatient(getPatientFromTextField(), patientTable);
+                    PatientController.addRowPatientTable(defaultTableModelMain);
                 }
                 case UPDATE -> {
                     rs = PatientController.updatePatient(indexSelectedPatient, getPatientFromTextField(), patientTable);
@@ -963,7 +967,6 @@ public class PatientsManagement extends javax.swing.JPanel {
             Message ms = new Message(MainView.getFrames()[0], true);
             ms.showMessage("Hãy nhập đầy đủ thông tin", false);
         }
-
     }
 
     private void deletePatientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletePatientButtonActionPerformed
@@ -981,6 +984,7 @@ public class PatientsManagement extends javax.swing.JPanel {
         obj.showMessage(ms, withAction);
         if (obj.isOk()) {
             PatientController.deletePatient(indexSelectedPatient, selectedPatient, patientTable);
+            PatientController.addRowPatientTable(defaultTableModelMain);
             indexSelectedPatient = -1;
             selectedPatient = null;
         }
@@ -997,7 +1001,6 @@ public class PatientsManagement extends javax.swing.JPanel {
             } else {
                 clearText();
             }
-
         }
     }
 

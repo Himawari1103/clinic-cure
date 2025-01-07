@@ -4,6 +4,11 @@
  */
 package view.panels;
 
+import controller.main.ReportController;
+import view.components.main.components.table.Table;
+
+import java.time.LocalDate;
+
 /**
  *
  * @author Chi Cute
@@ -15,6 +20,15 @@ public class DailyRecord extends javax.swing.JPanel {
      */
     public DailyRecord() {
         initComponents();
+        recordTable.fixTable(jScrollPane1);
+    }
+
+    public void addData(LocalDate start, LocalDate end){
+        ReportController.addDataDailyReport(this.recordTable, start, end);
+    }
+
+    public void addData(){
+        ReportController.addDataDailyReport(this.recordTable);
     }
 
     /**
@@ -27,7 +41,7 @@ public class DailyRecord extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        recordTable = new javax.swing.JTable();
+        recordTable = new Table();
 
         recordTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -62,8 +76,18 @@ public class DailyRecord extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable recordTable;
+    private Table recordTable;
     // End of variables declaration//GEN-END:variables
+
+
+    public Table getRecordTable() {
+        return recordTable;
+    }
+
+    public void setRecordTable(Table recordTable) {
+        this.recordTable = recordTable;
+    }
 }

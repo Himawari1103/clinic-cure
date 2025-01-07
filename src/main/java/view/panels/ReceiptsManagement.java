@@ -6,6 +6,7 @@ package view.panels;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.swing.DefaultListCellRenderer;
@@ -20,26 +21,43 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
+import constants.AdminAction;
+import constants.Gender;
+import controller.main.PatientController;
+import controller.main.ReceiptController;
+import controller.main.RecordController;
+import model.base.Patient;
 import model.base.Receipt;
 import util.Utils;
 import view.components.main.components.scrollbar.ScrollBarCustom;
+import view.components.main.components.table.Table;
+import view.components.main.dialog.DialogRecordChooser;
+import view.components.main.dialog.DialogStaffIsDoctorChooser;
+import view.components.main.dialog.Message;
+import view.components.main.dialog.MessageResultAdminAction;
+import view.frames.MainView;
 
 /**
- *
  * @author Chi Cute
  */
 public class ReceiptsManagement extends javax.swing.JPanel {
 
     Receipt selectedReceipt = null;
     int indexSelectedReceipt = -1;
+    AdminAction currentAction = null;
 
-    /**
-     * Creates new form ReceiptsManagement
-     */
+    DefaultTableModel defaultTableModelMain;
+
     public ReceiptsManagement() {
         initComponents();
         disableEditingText();
         disableSupportButton();
+
+        initTable();
+        defaultTableModelMain = (DefaultTableModel) receiptTable.getModel();
+        receiptTable.fixTable(jScrollPane2);
     }
 
     public void enableEditingText() {   // bật edit tất cả các textField
@@ -51,6 +69,9 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         receiptDate.setEnabled(true);
         setComboBoxCustomDisabled(receiptMonth, false);
         receiptYear.setEnabled(true);
+        receiptHour.setEnabled(true);
+        receiptMinute.setEnabled(true);
+
         recordIDTextField.setEnabled(true);
         amountTextField.setEnabled(true);
     }
@@ -72,6 +93,10 @@ public class ReceiptsManagement extends javax.swing.JPanel {
 
         receiptYear.setEnabled(false);
         receiptYear.setDisabledTextColor(Color.BLACK);
+        receiptHour.setEnabled(false);
+        receiptHour.setDisabledTextColor(Color.BLACK);
+        receiptMinute.setEnabled(false);
+        receiptYear.setDisabledTextColor(Color.BLACK);
 
     }
 
@@ -87,21 +112,34 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         receiptMonth.setSelectedItem(String.valueOf(receipt.getCreatedAt().getMonth()));
 
         receiptYear.setText(String.valueOf(receipt.getCreatedAt().getYear()));
+
+        receiptHour.setText(String.valueOf(receipt.getCreatedAt().getYear()));
+
+        receiptMinute.setText(String.valueOf(receipt.getCreatedAt().getYear()));
     }
 
     public void clearText() {   // xóa hết giá trị của textField
         receiptIDTextField.setText("");
+    }
 
+    public void clearTextWithoutId() {   // xóa hết giá trị của textField
         recordIDTextField.setText("");
-
         amountTextField.setText("");
-
         receiptDate.setText("");
-
         receiptMonth.setSelectedItem("1");
-
         receiptYear.setText("");
+        receiptHour.setText("");
+        receiptMinute.setText("");
+    }
 
+    public boolean hasTextFieldEmpty() {
+        return receiptIDTextField.getText().trim().isEmpty()
+                || recordIDTextField.getText().trim().isEmpty()
+                || amountTextField.getText().trim().isEmpty()
+                || receiptDate.getText().trim().isEmpty()
+                || receiptYear.getText().trim().isEmpty()
+                || receiptHour.getText().trim().isEmpty()
+                || receiptMinute.getText().trim().isEmpty();
     }
 
     public void disableSupportButton() {    // disable các nút hoàn tác, hủy, lưu, chon
@@ -143,6 +181,21 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         updateButton.setEnabled(true);
         putOffReceiptButton.setEnabled(true);
         printButton.setEnabled(true);
+    }
+
+    public Receipt getReceiptFromTextField() {
+        String receiptId = receiptIDTextField.getText().trim();
+        String recordId = recordIDTextField.getText().trim();
+        double amount = Double.parseDouble(amountTextField.getText().trim());
+        LocalDateTime createAt = LocalDateTime.of(
+                Integer.parseInt(receiptYear.getText().trim()),
+                Integer.parseInt((String) Objects.requireNonNull(receiptMonth.getSelectedItem())),
+                Integer.parseInt(receiptDate.getText().trim()),
+                Integer.parseInt(receiptHour.getText().trim()),
+                Integer.parseInt(receiptMinute.getText().trim())
+        );
+
+        return new Receipt(receiptId, recordId, amount, createAt);
     }
 
     public void setComboBoxCustomDisabled(JComboBox<?> comboBox, boolean disabled) {
@@ -203,28 +256,43 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         }
     }
 
-    public Receipt getReceiptFromTextField() {
-        String receiptId = receiptIDTextField.getText().trim();
-        String recordId = recordIDTextField.getText().trim();
-        double amount = Double.parseDouble(amountTextField.getText().trim());
-        LocalDateTime createAt = null;
-        
-        return new Receipt(receiptId, recordId, amount, createAt);
+    public void addDataTable() {
+        ReceiptController.addRowReceiptTable(receiptTable);
     }
 
-    /**
-     * /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    public void initTable() {
+        addDataTable();
+
+        ListSelectionModel selectionModel = receiptTable.getSelectionModel();
+        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    indexSelectedReceipt = receiptTable.getSelectedRow();
+                    if (indexSelectedReceipt != -1) {
+                        String receiptId = (String) receiptTable.getValueAt(indexSelectedReceipt, 0);
+                        String recordId = (String) receiptTable.getValueAt(indexSelectedReceipt, 1);
+                        double amount = Double.parseDouble((String) receiptTable.getValueAt(indexSelectedReceipt, 2));
+                        LocalDateTime createAt = Utils.stringToLocalDateTimeWithTime((String) receiptTable.getValueAt(indexSelectedReceipt, 3));
+
+                        selectedReceipt = new Receipt(receiptId, recordId, amount, createAt);
+
+                        setText(selectedReceipt);
+                    }
+                }
+            }
+        });
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        receiptTable = new javax.swing.JTable();
+        receiptTable = new Table();
         jLabel5 = new javax.swing.JLabel();
         receiptIDTextField = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -239,6 +307,8 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         receiptDate = new javax.swing.JTextField();
         receiptMonth = new javax.swing.JComboBox<>();
         receiptYear = new javax.swing.JTextField();
+        receiptHour = new javax.swing.JTextField();
+        receiptMinute = new javax.swing.JTextField();
         chooseButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -251,19 +321,19 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Quản lý hóa đơn", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
         receiptTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][]{
 
-            },
-            new String [] {
-                "ID hóa đơn", "ID hồ sơ", "Ngày tạo", "Số tiền"
-            }
+                },
+                new String[]{
+                        "ID hóa đơn", "ID hồ sơ", "Ngày tạo", "Số tiền"
+                }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
+            boolean[] canEdit = new boolean[]{
+                    false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         receiptTable.setFocusable(false);
@@ -310,6 +380,11 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         putOffReceiptButton.setText("Hủy hóa đơn");
         putOffReceiptButton.setFocusPainted(false);
         putOffReceiptButton.setFocusable(false);
+        putOffReceiptButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                putOffReceiptButtonActionPerformed(evt);
+            }
+        });
 
         searchReceiptButton.setBackground(new java.awt.Color(102, 255, 255));
         searchReceiptButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -335,10 +410,12 @@ public class ReceiptsManagement extends javax.swing.JPanel {
 
         receiptDate.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        receiptMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" }));
+        receiptMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}));
 
         receiptYear.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         receiptYear.setText("2025");
+        receiptHour.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        receiptMinute.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         chooseButton.setBackground(new java.awt.Color(204, 204, 204));
         chooseButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -398,105 +475,111 @@ public class ReceiptsManagement extends javax.swing.JPanel {
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(107, 107, 107)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel5)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(createReceiptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(receiptIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(recordIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(107, 107, 107)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(jLabel5)))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGap(25, 25, 25)
+                                                .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(createReceiptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(chooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(receiptDate, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(receiptMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(receiptYear, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(55, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(putOffReceiptButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(searchReceiptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(printButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20))))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(receiptIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                                .addComponent(recordIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(chooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jLabel8)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(receiptDate, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(receiptMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(receiptYear, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(receiptHour, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(receiptMinute, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addContainerGap(55, Short.MAX_VALUE))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(putOffReceiptButton)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(searchReceiptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(printButton, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(20, 20, 20))))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane2))
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(receiptIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(receiptYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(receiptMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(receiptDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(recordIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chooseButton))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(updateButton)
-                    .addComponent(createReceiptButton)
-                    .addComponent(putOffReceiptButton)
-                    .addComponent(cancelButton)
-                    .addComponent(saveButton)
-                    .addComponent(undoButton)
-                    .addComponent(searchReceiptButton)
-                    .addComponent(printButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel5)
+                                        .addComponent(receiptIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel7)
+                                        .addComponent(amountTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel8)
+                                        .addComponent(receiptMinute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(receiptHour, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(receiptYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(receiptMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(receiptDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel6)
+                                        .addComponent(recordIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(chooseButton))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(updateButton)
+                                        .addComponent(createReceiptButton)
+                                        .addComponent(putOffReceiptButton)
+                                        .addComponent(cancelButton)
+                                        .addComponent(saveButton)
+                                        .addComponent(undoButton)
+                                        .addComponent(searchReceiptButton)
+                                        .addComponent(printButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 980, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 980, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 620, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 620, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -509,42 +592,110 @@ public class ReceiptsManagement extends javax.swing.JPanel {
     }//GEN-LAST:event_searchReceiptButtonActionPerformed
 
     private void chooseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseButtonActionPerformed
-        // TODO add your handling code here:
+        DialogRecordChooser dialogRecordChooser = new DialogRecordChooser(MainView.getFrames()[0], true, false);
+        dialogRecordChooser.showTable("Hãy chọn hồ sơ!");
+        if(dialogRecordChooser.isOk()){
+            recordIDTextField.setText(dialogRecordChooser.getSelectedRecordId());
+        }
     }//GEN-LAST:event_chooseButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
-        disableSupportButton();
-        enableMainButton();
+        boolean rs = false;
+        if (!hasTextFieldEmpty()) {
+            switch (currentAction) {
+                case ADD -> {
+                    rs = ReceiptController.addReceipt(getReceiptFromTextField(), receiptTable);
+                    PatientController.addRowPatientTable(defaultTableModelMain);
+                }
+                case UPDATE -> {
+                    rs = ReceiptController.updateReceipt(indexSelectedReceipt, getReceiptFromTextField(), receiptTable);
+                }
+            }
+            enableMainButton();
+            disableSupportButton();
+            disableEditingText();
+            MessageResultAdminAction messageResultAdminAction = new MessageResultAdminAction(MainView.getFrames()[0], true);
+            if (rs) {
+                messageResultAdminAction.showMessageSuccess(currentAction);
+            } else {
+                messageResultAdminAction.showMessageFail(currentAction);
+            }
+            currentAction = null;
+        } else {
+            Message ms = new Message(MainView.getFrames()[0], true);
+            ms.showMessage("Hãy nhập đầy đủ thông tin", false);
+        }
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
-        // TODO add your handling code here:
-        clearText();
-    }//GEN-LAST:event_undoButtonActionPerformed
+        if (selectedReceipt != null) {
+            setText(selectedReceipt);
+        } else {
+            if(currentAction == AdminAction.ADD){
+                clearTextWithoutId();
+            } else {
+                clearText();
+            }
+        }
+    }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
         disableSupportButton();
         enableMainButton();
+
+        disableEditingText();
+
+        if (selectedReceipt != null) {
+            setText(selectedReceipt);
+        } else {
+            clearText();
+        }
+
+        currentAction = null;
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_printButtonActionPerformed
+
+    }
+
+    private void putOffReceiptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
+        currentAction = AdminAction.DELETE;
+        Message obj = new Message(MainView.getFrames()[0], true);
+        String ms = "";
+        boolean withAction;
+        if (selectedReceipt == null) {
+            ms = "Không có đối tượng để xóa";
+            withAction = false;
+        } else {
+            ms = "Bạn có chắc chắn muốn xóa không?";
+            withAction = true;
+        }
+        obj.showMessage(ms, withAction);
+        if (obj.isOk()) {
+            ReceiptController.deleteReceipt(indexSelectedReceipt, selectedReceipt, receiptTable);
+            ReceiptController.addRowReceiptTable(defaultTableModelMain);
+            indexSelectedReceipt = -1;
+            selectedReceipt = null;
+        }
+
+        currentAction = null;
+    }
 
     private void createReceiptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createReceiptButtonActionPerformed
-        // TODO add your handling code here:
+        if (currentAction != AdminAction.ADD) clearText();
+        currentAction = AdminAction.ADD;
         disableRemainMainButton(createReceiptButton);
         enableSupportButton();
+
+        receiptIDTextField.setText(Utils.genUUID().toString());
         enableEditingText();
     }//GEN-LAST:event_createReceiptButtonActionPerformed
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-        // TODO add your handling code here:
+        currentAction = AdminAction.UPDATE;
         disableRemainMainButton(updateButton);
         enableSupportButton();
-        enableEditingText();
+        enableEditingTextWithOutId();
     }//GEN-LAST:event_updateButtonActionPerformed
 
 
@@ -562,9 +713,11 @@ public class ReceiptsManagement extends javax.swing.JPanel {
     private javax.swing.JButton printButton;
     private javax.swing.JButton putOffReceiptButton;
     private javax.swing.JTextField receiptDate;
+    private javax.swing.JTextField receiptHour;
+    private javax.swing.JTextField receiptMinute;
     private javax.swing.JTextField receiptIDTextField;
     private javax.swing.JComboBox<String> receiptMonth;
-    private javax.swing.JTable receiptTable;
+    private Table receiptTable;
     private javax.swing.JTextField receiptYear;
     private javax.swing.JTextField recordIDTextField;
     private javax.swing.JButton saveButton;
