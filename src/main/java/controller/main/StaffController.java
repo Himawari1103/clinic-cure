@@ -2,15 +2,18 @@ package controller.main;
 
 import constants.StaffRole;
 import model.base.Staff;
-import model.dao.PatientDao;
 import model.dao.StaffDao;
-import view.components.main.components.table.Table;
+import view.home.components.table.Table;
 
 import javax.swing.table.DefaultTableModel;
+import java.util.HashMap;
 
 public class StaffController {
-    public static void addRowStaffTable(Table table) {
-        StaffDao.getInstance().selectAll().forEach(e -> table.addRow(e.toObjects()));
+    public static void addRowStaffTable(Table table, HashMap<String, Staff> mapStaff) {
+        StaffDao.getInstance().selectAll().forEach(e -> {
+            table.addRow(e.toObjects());
+            mapStaff.put(e.getStaffId(),e);
+        });
     }
 
     public static void addRowStaffIsDoctorTable(Table table) {

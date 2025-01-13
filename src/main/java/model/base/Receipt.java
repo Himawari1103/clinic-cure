@@ -72,6 +72,6 @@ public class Receipt {
     }
 
     public String[] toStrings(){
-        return new String[]{receiptId, recordId, String.valueOf(amount), Utils.localDateTimeToStringWithTime(createdAt)};
+        return new String[]{receiptId, recordId, Utils.localDateTimeToStringWithTime(createdAt), String.valueOf(amount)};
     }
 }

@@ -2,7 +2,7 @@ package util;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
-import view.components.main.components.scrollbar.ScrollBarCustom;
+import view.home.components.scrollbar.ScrollBarCustom;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -58,17 +58,22 @@ public class Utils {
     }
 
     public static String localDateTimeToString(LocalDateTime lcDateTime){
-        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm:ss");
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return lcDateTime.format(dtfDate);
     }
 
     public static LocalDateTime stringToLocalDateTime(String str){
-        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm:ss");
-        return LocalDateTime.parse(str,dtfDate);
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+        return LocalDateTime.parse(str + " - 00:00:00",dtfDate);
     }
 
     public static String localDateTimeToStringWithTime(LocalDateTime lcDateTime){
         DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+        return lcDateTime.format(dtfDate);
+    }
+
+    public static String localDateTimeToStringWithTimeSql(LocalDateTime lcDateTime){
+        DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return lcDateTime.format(dtfDate);
     }
 
@@ -119,6 +124,7 @@ public class Utils {
             });
         } else {
             comboBox.setEnabled(true);
+            comboBox.setBackground(Color.WHITE);
             comboBox.setRenderer(new DefaultListCellRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -157,5 +163,90 @@ public class Utils {
                 }
             });
         }
+    }
+
+    public static <T extends Enum<T>> void setModelComboBox (JComboBox<String> jComboBox, Class<T> modelClass){
+        T[] modelEnum = modelClass.getEnumConstants();
+
+        String[] modelString = new String[modelEnum.length + 1];
+        modelString[0] = "--Chọn--";
+
+        for (int i = 1; i < modelString.length; i++) {
+            modelString[i] = modelEnum[i-1].toString();
+            System.out.println(modelEnum[i-1].toString());
+        }
+        jComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(modelString));
+    }
+
+    public static void setModelMonthComboBox (JComboBox<String> jComboBox){
+        String[] modelString = new String[13];
+        modelString[0] = "--";
+
+        for (int i = 1; i < modelString.length; i++) {
+            modelString[i] = String.valueOf(i);
+        }
+        jComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(modelString));
+    }
+
+    public static String getRegexDate(String day, String month, String year) {
+        StringBuilder regex = new StringBuilder();
+
+        if (!day.isEmpty()) {
+            regex.append(String.format("^%02d/", Integer.parseInt(day)));
+        } else {
+            regex.append("^\\d{2}/");
+        }
+
+        if (!month.isEmpty()) {
+            regex.append(String.format("%02d/", Integer.parseInt(month)));
+        } else {
+            regex.append("\\d{2}/");
+        }
+
+        if (!year.isEmpty()) {
+            regex.append(String.format("%s.*", year));
+        } else {
+            regex.append(".*");
+        }
+
+        return regex.toString();
+    }
+
+    public static String getRegexDateTime(String day, String month, String year, String hour, String minute) {
+        StringBuilder regex = new StringBuilder();
+
+        if (!day.isEmpty()) {
+            regex.append(String.format("^%02d/", Integer.parseInt(day)));
+        } else {
+            regex.append("^\\d{2}/");
+        }
+
+        if (!month.isEmpty()) {
+            regex.append(String.format("%02d/", Integer.parseInt(month)));
+        } else {
+            regex.append("\\d{2}/");
+        }
+
+        if (!year.isEmpty()) {
+            regex.append(String.format("%s.*", year));
+        } else {
+            regex.append("\\d{4} - ");
+        }
+
+        if (!hour.isEmpty()) {
+            regex.append(String.format("%02d:", Integer.parseInt(hour)));
+        } else {
+            regex.append("\\d{2}:");
+        }
+
+        if (!minute.isEmpty()) {
+            regex.append(String.format("%02d:.*", Integer.parseInt(minute)));
+        } else {
+            regex.append("\\d{2}:.*");
+        }
+
+        System.out.println(regex);
+
+        return regex.toString();
     }
 }

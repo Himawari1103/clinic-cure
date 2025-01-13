@@ -28,4 +28,9 @@ public enum StaffRole {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return detail;
+    }
 }

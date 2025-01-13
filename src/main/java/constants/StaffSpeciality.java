@@ -34,4 +34,9 @@ public enum StaffSpeciality {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return detail;
+    }
 }

@@ -1,12 +1,9 @@
 package controller.main;
 
-import model.base.Staff;
-import model.dao.StaffDao;
 import model.db_connection.DBConnection;
 import util.Utils;
-import view.components.main.components.table.Table;
+import view.home.components.table.Table;
 
-import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,20 +21,18 @@ public class ReportController {
                     "JOIN \n" +
                     "    receipts rc ON r.recordId = rc.recordId\n" +
                     "WHERE \n" +
-                    "    rc.createdAt BETWEEN ? AND ?"+
+                    "    rc.createdAt >= ? AND rc.createdAt < ? \n"+
                     "GROUP BY \n" +
                     "    DATE(rc.createdAt)\n" +
                     "ORDER BY \n" +
                     "    DATE(rc.createdAt);\n";
             PreparedStatement stmt = c.prepareStatement(sql);
 
-            // Thực hiện thay đổi các tham số ngày (thí dụ: từ '2024-01-01' đến '2024-02-01')
-            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth());
-            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth());
+            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth() + " 00:00:00");
+            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth() + " 00:00:00");
 
             System.out.println(stmt.toString());
 
-            // Thực hiện truy vấn và nhận kết quả
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -45,12 +40,7 @@ public class ReportController {
                 double total_revenue = rs.getDouble("total_revenue");
                 int total_visits = rs.getInt("total_visits");
 
-                String[] row = {Utils.localDateTimeToString(date), String.valueOf(total_revenue), String.valueOf(total_visits)};
-
-                System.out.println("date: " + date);
-                System.out.println("total_revenue: " + total_revenue);
-                System.out.println("total_visits: " + total_visits);
-                System.out.println("============");
+                String[] row = {Utils.localDateTimeToString(date),String.format("%.2f",total_revenue), String.valueOf(total_visits)};
 
                 table.addRow(row);
             }
@@ -80,7 +70,6 @@ public class ReportController {
 
             System.out.println(stmt.toString());
 
-            // Thực hiện truy vấn và nhận kết quả
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -88,12 +77,7 @@ public class ReportController {
                 double total_revenue = rs.getDouble("total_revenue");
                 int total_visits = rs.getInt("total_visits");
 
-                String[] row = {Utils.localDateTimeToString(date), String.valueOf(total_revenue), String.valueOf(total_visits)};
-
-                System.out.println("date: " + date);
-                System.out.println("total_revenue: " + total_revenue);
-                System.out.println("total_visits: " + total_visits);
-                System.out.println("============");
+                String[] row = {Utils.localDateTimeToString(date), String.format("%.2f",total_revenue), String.valueOf(total_visits)};
 
                 table.addRow(row);
             }
@@ -120,23 +104,19 @@ public class ReportController {
                     "LEFT JOIN \n" +
                     "    records r ON p.patientId = r.patientId\n" +
                     "WHERE \n" +
-                    "    r.createdAt BETWEEN ? AND ?\n" +
+                    "    r.createdAt >= ? AND r.createdAt < ? \n" +
                     "GROUP BY \n" +
                     "    p.patientId, p.fullName, p.dateOfBirth, p.phoneNumber, p.address\n" +
+                    "HAVING numberOfVisits > 0\n" +
                     "ORDER BY \n" +
                     "    p.patientId;\n";
             PreparedStatement stmt = c.prepareStatement(sql);
 
-            // Thực hiện thay đổi các tham số ngày (thí dụ: từ '2024-01-01' đến '2024-02-01')
-            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth());
-            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth());
+            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth() + " 00:00:00");
+            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth() + " 00:00:00");
 
-            System.out.println(stmt.toString());
-
-            // Thực hiện truy vấn và nhận kết quả
             ResultSet rs = stmt.executeQuery();
 
-            // Lặp qua kết quả và hiển thị
             while (rs.next()) {
                 String patientId = rs.getString("patientId");
                 String fullName = rs.getString("fullName");
@@ -146,14 +126,6 @@ public class ReportController {
                 int numberOfVisits = rs.getInt("numberOfVisits");
 
                 String[] row = {patientId, fullName, Utils.localDateToString(dateOfBirth), phoneNumber, address, String.valueOf(numberOfVisits)};
-
-                System.out.println("Patient ID: " + patientId);
-                System.out.println("Full Name: " + fullName);
-                System.out.println("Date of Birth: " + dateOfBirth);
-                System.out.println("Phone Number: " + phoneNumber);
-                System.out.println("Address: " + address);
-                System.out.println("Number of Visits: " + numberOfVisits);
-                System.out.println("-------------------------------");
 
                 table.addRow(row);
             }
@@ -167,7 +139,6 @@ public class ReportController {
     }
 
     public static void addDataPatientList(Table table) {
-        System.out.println("debug!");
         Connection c = DBConnection.getConnection();
         try {
             String sql = "SELECT \n" +
@@ -183,16 +154,15 @@ public class ReportController {
                     "    records r ON p.patientId = r.patientId\n" +
                     "GROUP BY \n" +
                     "    p.patientId, p.fullName, p.dateOfBirth, p.phoneNumber, p.address\n" +
+                    "HAVING numberOfVisits > 0\n" +
                     "ORDER BY \n" +
                     "    p.patientId;\n";
             PreparedStatement stmt = c.prepareStatement(sql);
 
             System.out.println(stmt.toString());
 
-            // Thực hiện truy vấn và nhận kết quả
             ResultSet rs = stmt.executeQuery();
 
-            // Lặp qua kết quả và hiển thị
             while (rs.next()) {
                 String patientId = rs.getString("patientId");
                 String fullName = rs.getString("fullName");
@@ -202,14 +172,6 @@ public class ReportController {
                 int numberOfVisits = rs.getInt("numberOfVisits");
 
                 String[] row = {patientId, fullName, Utils.localDateToString(dateOfBirth), phoneNumber, address, String.valueOf(numberOfVisits)};
-
-                System.out.println("Patient ID: " + patientId);
-                System.out.println("Full Name: " + fullName);
-                System.out.println("Date of Birth: " + dateOfBirth);
-                System.out.println("Phone Number: " + phoneNumber);
-                System.out.println("Address: " + address);
-                System.out.println("Number of Visits: " + numberOfVisits);
-                System.out.println("-------------------------------");
 
                 table.addRow(row);
             }
@@ -233,11 +195,11 @@ public class ReportController {
                     "JOIN \n" +
                     "    records r ON rc.recordId = r.recordId\n" +
                     "WHERE \n" +
-                    "    r.createdAt BETWEEN ? AND ?;\n";
+                    "    rc.createdAt >= ? AND rc.createdAt < ?;\n";
             PreparedStatement stmt = c.prepareStatement(sql);
 
-            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth());
-            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth());
+            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth() + " 00:00:00");
+            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth() + " 00:00:00");
 
             System.out.println(stmt.toString());
 
@@ -290,13 +252,11 @@ public class ReportController {
                     "JOIN \n" +
                     "    receipts rc ON r.recordId = rc.recordId\n" +
                     "WHERE \n" +
-                    "    r.createdAt BETWEEN ? AND ?;\n";
+                    "    r.createdAt >= ? AND r.createdAt < ?;\n";
             PreparedStatement stmt = c.prepareStatement(sql);
 
-            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth());
-            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth());
-
-            System.out.println(stmt.toString());
+            stmt.setString(1, start.getYear()+"-"+ start.getMonthValue() + "-" + start.getDayOfMonth() + " 00:00:00");
+            stmt.setString(2, end.getYear()+"-"+ end.getMonthValue() + "-" + end.getDayOfMonth() + " 00:00:00");
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

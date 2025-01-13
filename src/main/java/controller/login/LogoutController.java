@@ -3,8 +3,8 @@ package controller.login;
 import model.model.AccountModel;
 import model.model.AdminModel;
 import model.model.StaffModel;
-import view.frames.Login;
-import view.frames.MainView;
+import view.login.frames.Login;
+import view.home.frames.MainView;
 
 public class LogoutController {
     public static void logoutFromMain(MainView mainView){

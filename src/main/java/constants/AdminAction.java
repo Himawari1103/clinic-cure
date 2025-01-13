@@ -3,7 +3,8 @@ package constants;
 public enum AdminAction {
     ADD("THÊM"),
     UPDATE("CẬP NHẬT"),
-    DELETE("XÓA");
+    DELETE("XÓA"),
+    SEARCH("TÌM KIẾM");
 
     private String detail;
 

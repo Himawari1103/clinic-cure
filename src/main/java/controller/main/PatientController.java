@@ -1,16 +1,21 @@
 package controller.main;
 
 import model.base.Patient;
+import model.base.Staff;
 import model.dao.PatientDao;
 import util.Utils;
-import view.components.main.components.table.Table;
+import view.home.components.table.Table;
+import view.home.main.model.ModelPatient;
 
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PatientController {
-    public static void addRowPatientTable(Table table) {
-        PatientDao.getInstance().selectAll().forEach(e -> table.addRow(e.toObjects()));
+    public static void addRowPatientTable(Table table, HashMap<String, ModelPatient> mapModelPatients) {
+        PatientDao.getInstance().selectAll().forEach(e -> {
+            table.addRow(e.toObjects());
+            mapModelPatients.put(e.getPatientId(),new ModelPatient(e));
+        });
     }
 
     public static void addRowPatientTableDialog(Table table) {

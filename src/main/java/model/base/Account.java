@@ -112,6 +112,6 @@ public class Account {
     }
 
     public String[] toStrings(){
-        return new String[]{accountId, username, password, email, accountType.getDetail(), Utils.localDateTimeToString(createdAt)};
+        return new String[]{accountId, username, password, email, accountType.getDetail(), Utils.localDateTimeToStringWithTime(createdAt)};
     }
 }

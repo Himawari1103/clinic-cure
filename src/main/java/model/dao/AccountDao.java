@@ -23,20 +23,24 @@ public class AccountDao implements Dao<Account> {
         try {
             PreparedStatement stmt;
             if (value.getAvatar() != null) {
-                String sql = "insert into accounts (accountId, username, password, accountType, avatar) values (?, ?, ?, ?, ?);";
+                String sql = "insert into accounts (accountId, username, password, email, accountType, createdAt, avatar) values (?, ?, ?, ?, ?, ?, ?);";
                 stmt = c.prepareStatement(sql);
                 stmt.setString(1, value.getAccountId());
                 stmt.setString(2, value.getUsername());
                 stmt.setString(3, value.getPassword());
-                stmt.setString(4, value.getAccountType().toString());
-                stmt.setBytes(5, Utils.iconToBytes(value.getAvatar()));
+                stmt.setString(4, value.getEmail());
+                stmt.setString(5, value.getAccountType().toString());
+                stmt.setString(6, Utils.localDateTimeToStringWithTimeSql(value.getCreatedAt()));
+                stmt.setBytes(7, Utils.iconToBytes(value.getAvatar()));
             } else {
-                String sql = "insert into accounts (accountId, username, password, accountType) values (?, ?, ?, ?);";
+                String sql = "insert into accounts (accountId, username, password, email, accountType, createdAt) values (?, ?, ?, ?, ?, ?);";
                 stmt = c.prepareStatement(sql);
                 stmt.setString(1, value.getAccountId());
                 stmt.setString(2, value.getUsername());
                 stmt.setString(3, value.getPassword());
-                stmt.setString(4, value.getAccountType().toString());
+                stmt.setString(4, value.getEmail());
+                stmt.setString(5, value.getAccountType().toString());
+                stmt.setString(6, Utils.localDateTimeToStringWithTimeSql(value.getCreatedAt()));
             }
             rs = stmt.executeUpdate();
         } catch (SQLException e) {
@@ -54,20 +58,26 @@ public class AccountDao implements Dao<Account> {
         try {
             PreparedStatement stmt;
             if (value.getAvatar() != null) {
-                String sql = "UPDATE accounts SET username = ?, password = ?, accountType = ?, avatar = ? WHERE accountId = ?;";
+                String sql = "UPDATE accounts SET username = ?, password = ?, email = ?, accountType = ?, createdAt = ?, avatar = ? WHERE accountId = ?;";
                 stmt = c.prepareStatement(sql);
+
                 stmt.setString(1, value.getUsername());
                 stmt.setString(2, value.getPassword());
-                stmt.setString(3, value.getAccountType().toString());
-                stmt.setBytes(4, Utils.iconToBytes(value.getAvatar()));
-                stmt.setString(5, value.getAccountId());
+                stmt.setString(3, value.getEmail());
+                stmt.setString(4, value.getAccountType().toString());
+                stmt.setString(5, Utils.localDateTimeToStringWithTimeSql(value.getCreatedAt()));
+                stmt.setBytes(6, Utils.iconToBytes(value.getAvatar()));
+                stmt.setString(7, value.getAccountId());
             } else {
-                String sql = "UPDATE accounts SET username = ?, password = ?, accountType = ? WHERE accountId = ?;";
+                String sql = "UPDATE accounts SET username = ?, password = ?, email = ?, accountType = ?, createdAt = ? WHERE accountId = ?;";
                 stmt = c.prepareStatement(sql);
+
                 stmt.setString(1, value.getUsername());
                 stmt.setString(2, value.getPassword());
-                stmt.setString(3, value.getAccountType().toString());
-                stmt.setString(4, value.getAccountId());
+                stmt.setString(3, value.getEmail());
+                stmt.setString(4, value.getAccountType().toString());
+                stmt.setString(5, Utils.localDateTimeToStringWithTimeSql(value.getCreatedAt()));
+                stmt.setString(6, value.getAccountId());
             }
             rs = stmt.executeUpdate();
         } catch (SQLException e) {

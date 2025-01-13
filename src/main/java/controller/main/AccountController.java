@@ -3,14 +3,18 @@ package controller.main;
 import model.base.Account;
 
 import model.dao.AccountDao;
-import view.components.main.components.table.Table;
+import view.home.components.table.Table;
 
 import javax.swing.table.DefaultTableModel;
+import java.util.HashMap;
 
 public class AccountController {
 
-    public static void addRowAccountTable(Table table) {
-        AccountDao.getInstance().selectAll().forEach(e -> table.addRow(e.toStrings()));
+    public static void addRowAccountTable(Table table, HashMap<String, Account> mapAccounts) {
+        AccountDao.getInstance().selectAll().forEach(e -> {
+            table.addRow(e.toStrings());
+            mapAccounts.put(e.getAccountId(), e);
+        });
     }
 
     public static void addRowAccountTable(DefaultTableModel defaultTableModel) {

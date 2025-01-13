@@ -3,11 +3,10 @@ package controller.main;
 import model.base.Appointment;
 import model.base.Patient;
 import model.dao.AppointmentDao;
-import model.dao.PatientDao;
-import model.dao.StaffDao;
 import model.db_connection.DBConnection;
 import util.Utils;
-import view.components.main.components.table.Table;
+import view.home.components.table.Table;
+import view.home.main.model.ModelAppointment;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
@@ -15,9 +14,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 public class AppointmentController {
-    public static void addRowAppointmentTable(Table table) {
+    public static void addRowAppointmentTable(Table table, HashMap<String, ModelAppointment> mapModelAppointments) {
         Connection c = DBConnection.getConnection();
         try {
             String sql = "SELECT \n" +
@@ -52,15 +52,8 @@ public class AppointmentController {
 
                 String[] row = {appointmentId, patientId, patientName, staffId, staffName, Utils.localDateTimeToStringWithTime(appointmentTime)};
 
-                System.out.println("Appointment ID: " + appointmentId);
-                System.out.println("Patient ID: " + patientId);
-                System.out.println("Patient Name: " + patientName);
-                System.out.println("Staff ID: " + staffId);
-                System.out.println("Staff Name: " + staffName);
-                System.out.println("Appointment Time: " + appointmentTime);
-                System.out.println("-------------------------------");
-
                 table.addRow(row);
+                mapModelAppointments.put(appointmentId,ModelAppointment.getInstanceFromRow(row));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -105,14 +98,6 @@ public class AppointmentController {
 
                 String[] row = {appointmentId, patientId, patientName, staffId, staffName, Utils.localDateTimeToStringWithTime(appointmentTime)};
 
-                System.out.println("Appointment ID: " + appointmentId);
-                System.out.println("Patient ID: " + patientId);
-                System.out.println("Patient Name: " + patientName);
-                System.out.println("Staff ID: " + staffId);
-                System.out.println("Staff Name: " + staffName);
-                System.out.println("Appointment Time: " + appointmentTime);
-                System.out.println("-------------------------------");
-
                 defaultTableModel.addRow(row);
             }
         } catch (SQLException e) {
@@ -122,32 +107,32 @@ public class AppointmentController {
         DBConnection.closeConnection(c);
     }
 
-    public static boolean addAppointment(Appointment appointment, Table table) {
-        int rs = AppointmentDao.getInstance().insert(appointment);
+    public static boolean addAppointment(ModelAppointment modelAppointment, Table table) {
+        int rs = AppointmentDao.getInstance().insert((Appointment)modelAppointment);
         if (rs != 0){
             table.addRow(new String[]{
-                    appointment.getAppointmentId(),
-                    appointment.getPatientId(),
-                    PatientDao.getInstance().selectById(appointment.getPatientId()).getFullName(),
-                    appointment.getStaffId(),
-                    StaffDao.getInstance().selectById(appointment.getStaffId()).getFullName(),
-                    Utils.localDateTimeToStringWithTime(appointment.getTime())
+                    modelAppointment.getAppointmentId(),
+                    modelAppointment.getPatientId(),
+                    modelAppointment.getPatientName(),
+                    modelAppointment.getStaffId(),
+                    modelAppointment.getStaffName(),
+                    Utils.localDateTimeToStringWithTime(modelAppointment.getTime())
             });
             return true;
         }
         return false;
     }
 
-    public static boolean updateAppointment(int index, Appointment appointment, Table table) {
-        int rs = AppointmentDao.getInstance().update(appointment);
+    public static boolean updateAppointment(int index, ModelAppointment modelAppointment, Table table) {
+        int rs = AppointmentDao.getInstance().update(modelAppointment);
         if (rs != 0){
             table.updateRow(index, new String[]{
-                    appointment.getAppointmentId(),
-                    appointment.getPatientId(),
-                    PatientDao.getInstance().selectById(appointment.getPatientId()).getFullName(),
-                    appointment.getStaffId(),
-                    StaffDao.getInstance().selectById(appointment.getStaffId()).getFullName(),
-                    Utils.localDateTimeToStringWithTime(appointment.getTime())
+                    modelAppointment.getAppointmentId(),
+                    modelAppointment.getPatientId(),
+                    modelAppointment.getPatientName(),
+                    modelAppointment.getStaffId(),
+                    modelAppointment.getStaffName(),
+                    Utils.localDateTimeToStringWithTime(modelAppointment.getTime())
             });
             return true;
         }

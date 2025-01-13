@@ -1,13 +1,11 @@
 package controller.main;
 
-import model.base.Appointment;
 import model.base.Record;
-import model.base.Staff;
 import model.dao.*;
 import model.db_connection.DBConnection;
 import util.Utils;
-import view.components.main.components.table.Table;
-import view.components.main.model.ModelRecord;
+import view.home.components.table.Table;
+import view.home.main.model.ModelRecord;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
@@ -16,11 +14,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RecordController {
-    public static ArrayList<ModelRecord> addRowRecordTable(Table table) {
+    public static void addRowRecordTable(Table table, HashMap<String, ModelRecord> mapModelRecord) {
         Connection c = DBConnection.getConnection();
-        ArrayList<ModelRecord> modelRecords = new ArrayList<>();
         try {
             String sql = "SELECT \n" +
                     "    r.recordId,\n" +
@@ -65,31 +63,17 @@ public class RecordController {
                 LocalDateTime recordCreatedAt = Utils.sqlTimestampToLocalDateTime(rs.getTimestamp("recordCreatedAt"));
                 boolean paymentStatus = rs.getBoolean("paymentStatus");
 
-                System.out.println("Record ID: " + recordId);
-                System.out.println("Patient ID: " + patientId);
-                System.out.println("Patient Name: " + patientName);
-                System.out.println("Staff ID: " + staffId);
-                System.out.println("Doctor Name: " + doctorName);
-                System.out.println("Symptom: " + symptom);
-                System.out.println("Diagnosis: " + diagnosis);
-                System.out.println("Prescription: " + prescription);
-                System.out.println("Record Created At: " + recordCreatedAt);
-                System.out.println("Payment Status: " + (paymentStatus ? "Paid" : "Unpaid"));
-                System.out.println("-------------------------------");
-
                 table.addRow(new String[]{
-                        recordId, patientId, patientName, doctorName, Utils.localDateTimeToStringWithTime(recordCreatedAt), paymentStatus?"Đã thanh toán":"Chưa thanh toán"
+                        recordId, patientId, patientName, doctorName, Utils.localDateTimeToStringWithTime(recordCreatedAt), paymentStatus ? "Đã thanh toán" : "Chưa thanh toán"
                 });
 
                 ModelRecord modelRecord = new ModelRecord(new Record(recordId, patientId, staffId, symptom, diagnosis, prescription, recordCreatedAt), patientName, staffId, paymentStatus);
-                modelRecords.add(modelRecord);
+                mapModelRecord.put(modelRecord.getRecordId(), modelRecord);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         DBConnection.closeConnection(c);
-
-        return modelRecords;
     }
 
     public static ArrayList<ModelRecord> addRowRecordTableDialog(Table table, boolean isPaid) {
@@ -118,8 +102,6 @@ public class RecordController {
                     "    staffs s ON r.staffId = s.staffId\n" +
                     "LEFT JOIN \n" +
                     "    receipts rc ON r.recordId = rc.recordId\n" +
-                    "WHERE \n" +
-                    "    rc.receiptId IS NULL\n" +
                     "ORDER BY \n" +
                     "    r.createdAt;\n\n";
             PreparedStatement stmt = c.prepareStatement(sql);
@@ -154,13 +136,13 @@ public class RecordController {
                 System.out.println("-------------------------------");
 
                 table.addRow(new String[]{
-                        recordId, patientId, patientName, doctorName, Utils.localDateTimeToStringWithTime(recordCreatedAt), paymentStatus?"Đã thanh toán":"Chưa thanh toán"
+                        recordId, patientId, patientName, doctorName, Utils.localDateTimeToStringWithTime(recordCreatedAt), paymentStatus ? "Đã thanh toán" : "Chưa thanh toán"
                 });
 
                 ModelRecord modelRecord = new ModelRecord(new Record(recordId, patientId, staffId, symptom, diagnosis, prescription, recordCreatedAt), patientName, staffId, paymentStatus);
 
-                if(!isPaid){
-                    if(!paymentStatus){
+                if (!isPaid) {
+                    if (!paymentStatus) {
                         modelRecords.add(modelRecord);
                     }
                 } else {
@@ -238,7 +220,7 @@ public class RecordController {
                 System.out.println("-------------------------------");
 
                 defaultTableModel.addRow(new String[]{
-                        recordId, patientId, patientName, doctorName, Utils.localDateTimeToStringWithTime(recordCreatedAt), paymentStatus?"Đã thanh toán":"Chưa thanh toán"
+                        recordId, patientId, patientName, doctorName, Utils.localDateTimeToStringWithTime(recordCreatedAt), paymentStatus ? "Đã thanh toán" : "Chưa thanh toán"
                 });
 
                 ModelRecord modelRecord = new ModelRecord(new Record(recordId, patientId, staffId, symptom, diagnosis, prescription, recordCreatedAt), patientName, staffId, paymentStatus);
@@ -254,7 +236,7 @@ public class RecordController {
 
     public static boolean addRecord(Record record, Table table) {
         int rs = RecordDao.getInstance().insert(record);
-        if (rs != 0){
+        if (rs != 0) {
             table.addRow(new String[]{
                     record.getRecordId(),
                     record.getPatientId(),
@@ -270,7 +252,7 @@ public class RecordController {
 
     public static boolean updateRecord(int index, Record record, Table table) {
         int rs = RecordDao.getInstance().update(record);
-        if (rs != 0){
+        if (rs != 0) {
             table.updateRow(index, new String[]{
                     record.getRecordId(),
                     record.getPatientId(),
@@ -286,7 +268,7 @@ public class RecordController {
 
     public static boolean payRecord(int index, Record record, Table table) {
         int rs = RecordDao.getInstance().update(record);
-        if (rs != 0){
+        if (rs != 0) {
             table.updateRow(index, new String[]{
                     record.getRecordId(),
                     record.getPatientId(),
@@ -302,7 +284,7 @@ public class RecordController {
 
     public static boolean deleteRecord(int index, Record record, Table table) {
         int rs = RecordDao.getInstance().delete(record);
-        if (rs != 0){
+        if (rs != 0) {
             table.deleteRow(index);
             return true;
         }
